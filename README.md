@@ -1,4 +1,4 @@
-# volt-demo-apps
+# volt-demo-app
 
 ## About this repository
 
