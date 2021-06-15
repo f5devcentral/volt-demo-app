@@ -16,6 +16,8 @@ resource "volterra_namespace" "ns" {
   name = var.base
 }
 
+//Consistency issue with provider response for NS resource
+//https://github.com/volterraedge/terraform-provider-volterra/issues/53
 resource "time_sleep" "ns_wait" {
   depends_on = [volterra_namespace.ns]
   create_duration = "5s"
@@ -43,6 +45,8 @@ resource "volterra_virtual_k8s" "vk8s" {
   }
 }
 
+//Consistency issue with vk8s resource response
+//https://github.com/volterraedge/terraform-provider-volterra/issues/54
 resource "time_sleep" "vk8s_wait" {
   depends_on = [volterra_virtual_k8s.vk8s]
   create_duration = "90s"
@@ -61,14 +65,11 @@ resource "local_file" "kubeconfig" {
     filename = "${path.module}/../../creds/vk8s.yaml"
 }
 
-//Revist this
-
 resource "volterra_app_type" "at" {
   name      = format("%s-app-type", var.base)
   namespace = "shared"
 }
 
-//Origin Pool, WAF, HTTP Load Balancer
 resource "volterra_origin_pool" "op" {
   name                   = format("%s-server", var.base)
   namespace              = volterra_namespace.ns.name
