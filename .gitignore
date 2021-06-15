@@ -1,0 +1,6 @@
+*.p12
+notes.md
+.terraform*
+terraform.*
+*.tfvars
+vk8s.yaml

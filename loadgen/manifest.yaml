@@ -1,0 +1,42 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: shop-traffic-gen-test
+spec:
+  schedule: "*/6 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: volt-traffic-gen
+              image: registry.f5demos.com/volt-traffic-gen
+              env:
+                - name: DURATION
+                  value: 5m
+                - name: TARGET_URL
+                  value: https://shop.amer-sp.f5demos.com
+              resources: {}
+              terminationMessagePath: /dev/termination-log
+              terminationMessagePolicy: File
+              imagePullPolicy: IfNotPresent
+          restartPolicy: Never
+          terminationGracePeriodSeconds: 30
+          dnsPolicy: ClusterFirst
+          securityContext: {}
+          imagePullSecrets:
+            - name: f5demos-registry-secret
+---
+kind: Secret
+apiVersion: v1
+metadata:
+  name: f5demos-registry-secret
+  namespace: demo-app
+  annotations:
+    ves.io/container-registry-secret: "true"
+    ves.io/virtual-sites: demo-app/demo-app-vs
+data:
+  password: MhwSGnN0cmluZzovLy9aalZrWlcxdmMxQmhjM01o
+  server: cmVnaXN0cnkuZjVkZW1vcy5jb20=
+  username: bGFidXNlcg==
+type: ves.io/container-registry-secret
