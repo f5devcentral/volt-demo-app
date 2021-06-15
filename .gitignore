@@ -3,4 +3,5 @@ notes.md
 .terraform*
 terraform.*
 *.tfvars
+!example.tfvars
 vk8s.yaml
