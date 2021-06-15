@@ -1,7 +1,7 @@
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
-  name: shop-traffic-gen-test
+  name: shop-traffic-gen
 spec:
   schedule: "*/6 * * * *"
   jobTemplate:
@@ -10,7 +10,7 @@ spec:
         spec:
           containers:
             - name: volt-traffic-gen
-              image: registry.f5demos.com/volt-traffic-gen
+              image: ${reg_server}/volt-traffic-gen
               env:
                 - name: DURATION
                   value: 5m
@@ -25,12 +25,12 @@ spec:
           dnsPolicy: ClusterFirst
           securityContext: {}
           imagePullSecrets:
-            - name: f5demos-registry-secret
+            - name: registry-secret
 ---
 kind: Secret
 apiVersion: v1
 metadata:
-  name: f5demos-registry-secret
+  name: registry-secret
   namespace: ${namespace}
   annotations:
     ves.io/container-registry-secret: "true"

@@ -19,7 +19,7 @@ variable "vs_site_selector" {
 }
 
 variable "registry_password" {
-    default = "2string:///some_b64e_pass"
+    default = "2string:///some_b64e_password"
 }
 
 variable "registry_username" {
