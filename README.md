@@ -1,6 +1,6 @@
 # volt-demo-app
 
-## About this repository
+## About the repository
 
 This repository creates a self-contained application running on Volterra Regional Edges
 along with load generation pods. This allows for VoltConsole dashboards to be populated with 
