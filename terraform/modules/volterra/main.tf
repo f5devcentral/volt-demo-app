@@ -68,6 +68,18 @@ resource "local_file" "kubeconfig" {
 resource "volterra_app_type" "at" {
   name      = format("%s-app-type", var.base)
   namespace = "shared"
+  features {
+    type = "BUSINESS_LOGIC_MARKUP"
+  }
+  features {
+    type = "USER_BEHAVIOR_ANALYSIS"
+  }
+  features {
+    type = "PER_REQ_ANOMALY_DETECTION"
+  }
+  features {
+    type = "TIMESERIES_ANOMALY_DETECTION"
+  }
 }
 
 resource "volterra_origin_pool" "op" {
@@ -120,6 +132,7 @@ resource "volterra_http_loadbalancer" "lb" {
   description                     = format("HTTPS loadbalancer object for %s origin server", var.base)
   domains                         = [var.app_fqdn]
   advertise_on_public_default_vip = true
+  labels                          = { "ves.io/app_type" = volterra_app_type.at.name }
   default_route_pools {
     pool {
       name      = volterra_origin_pool.op.name
