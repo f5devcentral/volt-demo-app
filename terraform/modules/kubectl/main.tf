@@ -16,9 +16,10 @@ data "kubectl_path_documents" "manifests" {
     vars = {
         namespace = var.namespace,
         target_url = var.target_url,
-        reg_password = var.reg_password,
-        reg_server = var.reg_server,
-        reg_username = var.reg_username
+        reg_password_b64 = var.reg_password_b64,
+        reg_server_b64 = var.reg_server_b64,
+        reg_username_b64 = var.reg_username_b64,
+        reg_server = var.reg_server
     }
 }
 
