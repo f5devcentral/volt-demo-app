@@ -82,6 +82,7 @@ resource "volterra_origin_pool" "op" {
   depends_on             = [time_sleep.ns_wait]
   description            = format("Origin pool pointing to frontend k8s service running on vsite")
   loadbalancer_algorithm = "ROUND ROBIN"
+  labels                 = format("ves.io/app_type: %s", volterra_app_type.at.name)
   origin_servers {
     k8s_service {
       inside_network  = false
