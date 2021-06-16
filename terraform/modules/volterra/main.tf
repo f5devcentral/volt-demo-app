@@ -68,6 +68,12 @@ resource "local_file" "kubeconfig" {
 resource "volterra_app_type" "at" {
   name      = format("%s-app-type", var.base)
   namespace = "shared"
+  features = [
+    "BUSINESS_LOGIC_MARKUP",
+    "USER_BEHAVIOR_ANALYSIS",
+    "PER_REQ_ANOMALY_DETECTION",
+    "TIMESERIES_ANOMALY_DETECTION"
+  ]
 }
 
 resource "volterra_origin_pool" "op" {
