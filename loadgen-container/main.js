@@ -1,6 +1,7 @@
 import { sleep } from "k6";
 
 import { crawler } from "./crawler.js";
+import { exploit } from "./exploit.js";
 
 export const options = {
     stages: [
@@ -18,5 +19,6 @@ function getRandom(min, max) {
 
 export default function main() {
   crawler();
+  exploit();
   sleep(getRandom(2, 5));
 }
