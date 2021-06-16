@@ -80,6 +80,9 @@ resource "volterra_app_type" "at" {
   features {
     type = "TIMESERIES_ANOMALY_DETECTION"
   }
+  business_logic_markup_setting {
+    enable = true
+  }
 }
 
 resource "volterra_origin_pool" "op" {
