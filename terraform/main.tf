@@ -15,9 +15,10 @@ module "volterra" {
 module "kubectl" {
   source = "./modules/kubectl"
 
-  reg_password = base64encode(var.registry_password)
-  reg_server = base64encode(var.registry_server)
-  reg_username = base64encode(var.registry_username)
+  reg_server = var.registry_server
+  reg_password_b64 = base64encode(var.registry_password)
+  reg_server_b64 = base64encode(var.registry_server)
+  reg_username_b64 = base64encode(var.registry_username)
 
   namespace = module.volterra.namespace
   kubecfg = module.volterra.kubecfg

@@ -36,7 +36,7 @@ metadata:
     ves.io/container-registry-secret: "true"
     ves.io/virtual-sites: ${namespace}/${namespace}-vs
 data:
-  password: ${reg_password}
-  server: ${reg_server}
-  username: ${reg_username}
+  password: ${reg_password_b64}
+  server: ${reg_server_b64}
+  username: ${reg_username_b64}
 type: ves.io/container-registry-secret
