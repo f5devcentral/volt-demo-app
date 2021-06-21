@@ -62,7 +62,8 @@ resource "volterra_api_credential" "cred" {
 
 resource "local_file" "kubeconfig" {
     content = base64decode(volterra_api_credential.cred.data)
-    filename = "${path.module}/../../creds/vk8s.yaml"
+    //filename = "${path.module}/../../creds/vk8s.yaml"
+    filename = format("%s/../../creds/%s", path.module, format("%s-vk8s.yaml", terraform.workspace))
 }
 
 resource "volterra_app_type" "at" {
