@@ -66,7 +66,8 @@ resource "local_file" "kubeconfig" {
 }
 
 resource "volterra_app_type" "at" {
-  name      = format("%s-app-type", var.base)
+  // This naming simplifies the 'mesh' cards
+  name      = var.base
   namespace = "shared"
   features {
     type = "BUSINESS_LOGIC_MARKUP"
