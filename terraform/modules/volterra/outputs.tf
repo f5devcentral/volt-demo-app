@@ -9,7 +9,7 @@ output "namespace" {
 }
 
 output "kubecfg" {
-  description = "kubeconfig file path"
-  value       = local_file.kubeconfig.filename
+  description = "kubeconfig file"
+  value       = local_file.kubeconfig
 }
 

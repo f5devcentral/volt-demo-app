@@ -8,7 +8,7 @@ terraform {
 }
 
 provider "kubectl" {
-  config_path = var.kubecfg
+  config_path = var.kubecfg.filename
 }
 
 data "kubectl_path_documents" "manifests" {
