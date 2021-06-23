@@ -9,7 +9,8 @@ module "volterra" {
   app_fqdn = var.app_fqdn
   api_url = var.api_url
   api_p12_file = var.api_p12_file
-  vs_site_selector = var.vs_site_selector
+  main_site_selector = var.main_site_selector
+  state_site_selector = var.state_site_selector
 }
  
 module "kubectl" {
@@ -21,6 +22,9 @@ module "kubectl" {
   reg_username_b64 = base64encode(var.registry_username)
 
   namespace = module.volterra.namespace
+  main_vsite = module.volterra.main_vsite
+  state_vsite = module.volterra.state_vsite
+  
   kubecfg = module.volterra.kubecfg
   target_url = module.volterra.app_url
 }

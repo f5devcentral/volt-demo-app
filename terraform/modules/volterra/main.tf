@@ -23,13 +23,24 @@ resource "time_sleep" "ns_wait" {
   create_duration = "5s"
 }
 
-resource "volterra_virtual_site" "vs" {
+resource "volterra_virtual_site" "main" {
   name      = format("%s-vs", volterra_namespace.ns.name)
   namespace = volterra_namespace.ns.name
   depends_on = [time_sleep.ns_wait]
 
   site_selector {
-    expressions = var.vs_site_selector
+    expressions = var.main_site_selector
+  }
+  site_type = "REGIONAL_EDGE"
+}
+
+resource "volterra_virtual_site" "state" {
+  name      = format("%s-state", volterra_namespace.ns.name)
+  namespace = volterra_namespace.ns.name
+  depends_on = [time_sleep.ns_wait]
+
+  site_selector {
+    expressions = var.state_site_selector
   }
   site_type = "REGIONAL_EDGE"
 }
@@ -40,7 +51,11 @@ resource "volterra_virtual_k8s" "vk8s" {
   depends_on = [time_sleep.ns_wait]
 
   vsite_refs {
-    name      = volterra_virtual_site.vs.name
+    name      = volterra_virtual_site.main.name
+    namespace = volterra_namespace.ns.name
+  }
+  vsite_refs {
+    name      = volterra_virtual_site.state.name
     namespace = volterra_namespace.ns.name
   }
 }
@@ -101,7 +116,7 @@ resource "volterra_origin_pool" "op" {
       service_name    = format("frontend.%s", volterra_namespace.ns.name)
       site_locator {
         virtual_site {
-          name      = volterra_virtual_site.vs.name
+          name      = volterra_virtual_site.main.name
           namespace = volterra_namespace.ns.name
         }
       }

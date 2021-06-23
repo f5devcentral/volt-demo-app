@@ -22,6 +22,7 @@ metadata:
   name: emailservice
   annotations:
     ves.io/workload-flavor: small
+    ves.io/virtual-sites: ${namespace}/${main_vsite}
 spec:
   selector:
     matchLabels:
@@ -61,6 +62,7 @@ metadata:
   annotations:
     ves.io/proxy-type: HTTP_PROXY
     ves.io/http2-enable: "true"
+    ves.io/virtual-sites: ${namespace}/${main_vsite}
 spec:
   type: ClusterIP
   selector:
@@ -76,6 +78,7 @@ metadata:
   name: paymentservice
   annotations:
     ves.io/workload-flavor: small
+    ves.io/virtual-sites: ${namespace}/${main_vsite}
 spec:
   selector:
     matchLabels:
@@ -110,6 +113,7 @@ metadata:
   annotations:
     ves.io/proxy-type: HTTP_PROXY
     ves.io/http2-enable: "true"
+    ves.io/virtual-sites: ${namespace}/${main_vsite}
 spec:
   type: ClusterIP
   selector:
@@ -125,6 +129,7 @@ metadata:
   name: productcatalogservice
   annotations:
     ves.io/workload-flavor: small
+    ves.io/virtual-sites: ${namespace}/${main_vsite}
 spec:
   selector:
     matchLabels:
@@ -159,6 +164,7 @@ metadata:
   annotations:
     ves.io/proxy-type: HTTP_PROXY
     ves.io/http2-enable: "true"
+    ves.io/virtual-sites: ${namespace}/${main_vsite}
 spec:
   type: ClusterIP
   selector:
@@ -174,6 +180,7 @@ metadata:
   name: cartservice
   annotations:
     ves.io/workload-flavor: small
+    ves.io/virtual-sites: ${namespace}/${main_vsite}
 spec:
   selector:
     matchLabels:
@@ -215,6 +222,7 @@ metadata:
   annotations:
     ves.io/proxy-type: HTTP_PROXY
     ves.io/http2-enable: "true"
+    ves.io/virtual-sites: ${namespace}/${main_vsite}
 spec:
   type: ClusterIP
   selector:
@@ -230,6 +238,7 @@ metadata:
   name: currencyservice
   annotations:
     ves.io/workload-flavor: small
+    ves.io/virtual-sites: ${namespace}/${main_vsite}
 spec:
   selector:
     matchLabels:
@@ -265,6 +274,7 @@ metadata:
   annotations:
     ves.io/proxy-type: HTTP_PROXY
     ves.io/http2-enable: "true"
+    ves.io/virtual-sites: ${namespace}/${main_vsite}
 spec:
   type: ClusterIP
   selector:
@@ -280,6 +290,7 @@ metadata:
   name: shippingservice
   annotations:
     ves.io/workload-flavor: small
+    ves.io/virtual-sites: ${namespace}/${main_vsite}
 spec:
   selector:
     matchLabels:
@@ -314,6 +325,7 @@ metadata:
   annotations:
     ves.io/proxy-type: HTTP_PROXY
     ves.io/http2-enable: "true"
+    ves.io/virtual-sites: ${namespace}/${main_vsite}
 spec:
   type: ClusterIP
   selector:
@@ -329,6 +341,7 @@ metadata:
   name: recommendationservice
   annotations:
     ves.io/workload-flavor: small
+    ves.io/virtual-sites: ${namespace}/${main_vsite}
 spec:
   selector:
     matchLabels:
@@ -369,6 +382,7 @@ metadata:
   annotations:
     ves.io/proxy-type: HTTP_PROXY
     ves.io/http2-enable: "true"
+    ves.io/virtual-sites: ${namespace}/${main_vsite}
 spec:
   ports:
     - name: grpc
@@ -382,6 +396,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: checkoutservice
+  ves.io/workload-flavor: small
+  ves.io/virtual-sites: ${namespace}/${main_vsite}
 spec:
   selector:
     matchLabels:
@@ -427,6 +443,7 @@ metadata:
   annotations:
     ves.io/proxy-type: HTTP_PROXY
     ves.io/http2-enable: "true"
+    ves.io/virtual-sites: ${namespace}/${main_vsite}
 spec:
   type: ClusterIP
   selector:
@@ -440,6 +457,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: frontend
+  ves.io/workload-flavor: small
+  ves.io/virtual-sites: ${namespace}/${main_vsite}
 spec:
   selector:
     matchLabels:
@@ -478,6 +497,7 @@ metadata:
   name: frontend
   annotations:
     ves.io/proxy-type: HTTP_PROXY
+    ves.io/virtual-sites: ${namespace}/${main_vsite}
   labels:
     app: frontend
     svc_name: frontend
@@ -495,6 +515,7 @@ metadata:
   name: redis-cart
   annotations:
     ves.io/workload-flavor: small
+    ves.io/virtual-sites: ${namespace}/${main_vsite}
 spec:
   selector:
     matchLabels:
@@ -521,6 +542,8 @@ apiVersion: v1
 kind: Service
 metadata:
   name: redis-cart
+  annotations:
+    ves.io/virtual-sites: ${namespace}/${main_vsite}
 spec:
   type: ClusterIP
   selector:

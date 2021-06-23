@@ -10,5 +10,8 @@ variable "api_url" {
 variable "api_p12_file" {
 }
 
-variable "vs_site_selector" {
+variable "main_site_selector" {
+}
+
+variable "state_site_selector" {
 }
