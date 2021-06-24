@@ -204,7 +204,7 @@ resource "volterra_tcp_loadbalancer" "redis" {
   namespace                       = volterra_namespace.ns.name
   depends_on                      = [time_sleep.ns_wait]
   description                     = format("TCP loadbalancer object for %s redis service", var.base)
-  domains                         = ["redis-cart.adn"]
+  domains                         = ["redis-cart.internal"]
   dns_volterra_managed            = false
   listen_port                     = 6379
   origin_pools_weights {
@@ -217,7 +217,7 @@ resource "volterra_tcp_loadbalancer" "redis" {
     advertise_where {
       vk8s_service {
         virtual_site {
-          name      = volterra_virtual_site.state.name
+          name      = volterra_virtual_site.main.name
           namespace = volterra_namespace.ns.name
         }
       }

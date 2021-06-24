@@ -198,7 +198,7 @@ spec:
         - containerPort: 7070
         env:
         - name: REDIS_ADDR
-          value: "redis-cart.adn:6379"
+          value: "redis-cart.internal:6379"
         - name: PORT
           value: "7070"
         - name: LISTEN_ADDR
@@ -396,8 +396,9 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: checkoutservice
-  ves.io/workload-flavor: small
-  ves.io/virtual-sites: ${namespace}/${main_vsite}
+  annotations:
+    ves.io/workload-flavor: small
+    ves.io/virtual-sites: ${namespace}/${main_vsite}
 spec:
   selector:
     matchLabels:
@@ -457,8 +458,9 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: frontend
-  ves.io/workload-flavor: small
-  ves.io/virtual-sites: ${namespace}/${main_vsite}
+  annotations:
+    ves.io/workload-flavor: small
+    ves.io/virtual-sites: ${namespace}/${main_vsite}
 spec:
   selector:
     matchLabels:
