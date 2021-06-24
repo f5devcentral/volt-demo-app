@@ -198,7 +198,7 @@ spec:
         - containerPort: 7070
         env:
         - name: REDIS_ADDR
-          value: "redis-cart:6379"
+          value: "redis-cart.adn:6379"
         - name: PORT
           value: "7070"
         - name: LISTEN_ADDR
@@ -515,7 +515,7 @@ metadata:
   name: redis-cart
   annotations:
     ves.io/workload-flavor: small
-    ves.io/virtual-sites: ${namespace}/${main_vsite}
+    ves.io/virtual-sites: ${namespace}/${state_vsite}
 spec:
   selector:
     matchLabels:
@@ -543,7 +543,7 @@ kind: Service
 metadata:
   name: redis-cart
   annotations:
-    ves.io/virtual-sites: ${namespace}/${main_vsite}
+    ves.io/virtual-sites: ${namespace}/${state_vsite}
 spec:
   type: ClusterIP
   selector:
