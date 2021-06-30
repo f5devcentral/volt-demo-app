@@ -16,7 +16,6 @@ The app consists of 11 microservices that talk to each other over gRPC.
 
 ## Instructions for use
 
-- Fork this repository
 - Obtain an API certificate from your target Volterra tenant. This should be in .p12 format. 
 - Create a ``tfvars`` file (look at [example.tfvars](terraform/tfvars/example.tfvars) for the info needed)
 
