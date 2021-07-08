@@ -23,13 +23,24 @@ resource "time_sleep" "ns_wait" {
   create_duration = "5s"
 }
 
-resource "volterra_virtual_site" "vs" {
+resource "volterra_virtual_site" "main" {
   name      = format("%s-vs", volterra_namespace.ns.name)
   namespace = volterra_namespace.ns.name
   depends_on = [time_sleep.ns_wait]
 
   site_selector {
-    expressions = var.vs_site_selector
+    expressions = var.main_site_selector
+  }
+  site_type = "REGIONAL_EDGE"
+}
+
+resource "volterra_virtual_site" "state" {
+  name      = format("%s-state", volterra_namespace.ns.name)
+  namespace = volterra_namespace.ns.name
+  depends_on = [time_sleep.ns_wait]
+
+  site_selector {
+    expressions = var.state_site_selector
   }
   site_type = "REGIONAL_EDGE"
 }
@@ -40,7 +51,11 @@ resource "volterra_virtual_k8s" "vk8s" {
   depends_on = [time_sleep.ns_wait]
 
   vsite_refs {
-    name      = volterra_virtual_site.vs.name
+    name      = volterra_virtual_site.main.name
+    namespace = volterra_namespace.ns.name
+  }
+  vsite_refs {
+    name      = volterra_virtual_site.state.name
     namespace = volterra_namespace.ns.name
   }
 }
@@ -62,7 +77,6 @@ resource "volterra_api_credential" "cred" {
 
 resource "local_file" "kubeconfig" {
     content = base64decode(volterra_api_credential.cred.data)
-    //filename = "${path.module}/../../creds/vk8s.yaml"
     filename = format("%s/../../creds/%s", path.module, format("%s-vk8s.yaml", terraform.workspace))
 }
 
@@ -87,11 +101,11 @@ resource "volterra_app_type" "at" {
   }
 }
 
-resource "volterra_origin_pool" "op" {
-  name                   = format("%s-server", var.base)
+resource "volterra_origin_pool" "frontend" {
+  name                   = format("%s-frontend", var.base)
   namespace              = volterra_namespace.ns.name
   depends_on             = [time_sleep.ns_wait]
-  description            = format("Origin pool pointing to frontend k8s service running on vsite")
+  description            = format("Origin pool pointing to frontend k8s service running in main-vsite")
   loadbalancer_algorithm = "ROUND ROBIN"
   origin_servers {
     k8s_service {
@@ -101,13 +115,38 @@ resource "volterra_origin_pool" "op" {
       service_name    = format("frontend.%s", volterra_namespace.ns.name)
       site_locator {
         virtual_site {
-          name      = volterra_virtual_site.vs.name
+          name      = volterra_virtual_site.main.name
           namespace = volterra_namespace.ns.name
         }
       }
     }
   }
   port               = 80
+  no_tls             = true
+  endpoint_selection = "LOCAL_PREFERRED"
+}
+
+resource "volterra_origin_pool" "redis" {
+  name                   = format("%s-redis", var.base)
+  namespace              = volterra_namespace.ns.name
+  depends_on             = [time_sleep.ns_wait]
+  description            = format("Origin pool pointing to redis k8s service running in state-vsite")
+  loadbalancer_algorithm = "ROUND ROBIN"
+  origin_servers {
+    k8s_service {
+      inside_network  = false
+      outside_network = false
+      vk8s_networks   = true
+      service_name    = format("redis-cart.%s", volterra_namespace.ns.name)
+      site_locator {
+        virtual_site {
+          name      = volterra_virtual_site.state.name
+          namespace = volterra_namespace.ns.name
+        }
+      }
+    }
+  }
+  port               = 6379
   no_tls             = true
   endpoint_selection = "LOCAL_PREFERRED"
 }
@@ -130,8 +169,8 @@ resource "volterra_waf" "waf" {
   }
 }
 
-resource "volterra_http_loadbalancer" "lb" {
-  name                            = format("%s-lb", var.base)
+resource "volterra_http_loadbalancer" "frontend" {
+  name                            = format("%s-fe", var.base)
   namespace                       = volterra_namespace.ns.name
   depends_on                      = [time_sleep.ns_wait]
   description                     = format("HTTPS loadbalancer object for %s origin server", var.base)
@@ -140,7 +179,7 @@ resource "volterra_http_loadbalancer" "lb" {
   labels                          = { "ves.io/app_type" = volterra_app_type.at.name }
   default_route_pools {
     pool {
-      name      = volterra_origin_pool.op.name
+      name      = volterra_origin_pool.frontend.name
       namespace = volterra_namespace.ns.name
     }
   }
@@ -158,4 +197,33 @@ resource "volterra_http_loadbalancer" "lb" {
   round_robin                     = true
   service_policies_from_namespace = true
   no_challenge                    = true
+}
+
+resource "volterra_tcp_loadbalancer" "redis" {
+  name                            = format("%s-redis", var.base)
+  namespace                       = volterra_namespace.ns.name
+  depends_on                      = [time_sleep.ns_wait]
+  description                     = format("TCP loadbalancer object for %s redis service", var.base)
+  domains                         = ["redis-cart.internal"]
+  dns_volterra_managed            = false
+  listen_port                     = 6379
+  origin_pools_weights {
+    pool {
+      name      = volterra_origin_pool.redis.name
+      namespace = volterra_namespace.ns.name
+    }
+  }
+  advertise_custom {
+    advertise_where {
+      vk8s_service {
+        virtual_site {
+          name      = volterra_virtual_site.main.name
+          namespace = volterra_namespace.ns.name
+        }
+      }
+    port = 6379
+    }
+  }
+  retract_cluster = true
+  hash_policy_choice_round_robin = true
 }

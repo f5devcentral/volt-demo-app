@@ -5,21 +5,22 @@ import { addRandAgent } from './helpers.js';
 
 export function crawler() {
     const base = `${__ENV.TARGET_URL}`
-    const res = http.get(base, addRandAgent());
-    const checkRes = check(res, {
+    let res = http.get(base, addRandAgent());
+    check(res, {
         'status is 200': (r) => r.status === 200
-      });
+    });
     const doc = parseHTML(res.body);
     doc.find("a").toArray().forEach(function (item) {
         if (item.attr("href").startsWith('http')) {
-            var childRes = http.get(item.attr("href"), addRandAgent());
+            var url = item.attr("href")
         } else {
-            var childRes = http.get(base + item.attr("href"), addRandAgent());
+            var url = base + item.attr("href")
         }
-        if ( typeof childRes !== 'undefined') {
-            const checkRes = check(childRes, {
+        res = http.get(url, addRandAgent());
+        if ( typeof res !== 'undefined') {
+            check(res, {
                 'status is 200': (r) => r.status === 200
-              });
+            });
         }
      });
      sleep(.2);

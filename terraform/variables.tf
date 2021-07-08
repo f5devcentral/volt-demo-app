@@ -14,8 +14,12 @@ variable "api_p12_file" {
   default = "./creds/tenant.api-creds.p12"
 }
 
-variable "vs_site_selector" {
+variable "main_site_selector" {
   default = ["ves.io/siteName in (ves-io-ny8-nyc, ves-io-wes-sea)"]
+}
+
+variable "state_site_selector" {
+  default = ["ves.io/siteName in (ves-io-dc12-ash)"]
 }
 
 variable "registry_password" {

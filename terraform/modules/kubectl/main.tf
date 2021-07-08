@@ -15,6 +15,8 @@ data "kubectl_path_documents" "manifests" {
     pattern = "${path.module}/manifests/*.yaml"
     vars = {
         namespace = var.namespace,
+        main_vsite = var.main_vsite,
+        state_vsite = var.state_vsite,
         target_url = var.target_url,
         reg_password_b64 = var.reg_password_b64,
         reg_server_b64 = var.reg_server_b64,

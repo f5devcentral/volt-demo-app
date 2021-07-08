@@ -21,7 +21,8 @@ kind: Deployment
 metadata:
   name: emailservice
   annotations:
-    ves.io/workload-flavor: small
+    ves.io/workload-flavor: tiny
+    ves.io/virtual-sites: ${namespace}/${main_vsite}
 spec:
   selector:
     matchLabels:
@@ -61,6 +62,7 @@ metadata:
   annotations:
     ves.io/proxy-type: HTTP_PROXY
     ves.io/http2-enable: "true"
+    ves.io/virtual-sites: ${namespace}/${main_vsite}
 spec:
   type: ClusterIP
   selector:
@@ -75,7 +77,8 @@ kind: Deployment
 metadata:
   name: paymentservice
   annotations:
-    ves.io/workload-flavor: small
+    ves.io/workload-flavor: tiny
+    ves.io/virtual-sites: ${namespace}/${main_vsite}
 spec:
   selector:
     matchLabels:
@@ -94,6 +97,8 @@ spec:
         env:
         - name: PORT
           value: "50051"
+        - name: ENABLE_PROFILER
+          value: "0"
         readinessProbe:
           exec:
             command: ["/bin/grpc_health_probe", "-addr=:50051"]
@@ -110,6 +115,7 @@ metadata:
   annotations:
     ves.io/proxy-type: HTTP_PROXY
     ves.io/http2-enable: "true"
+    ves.io/virtual-sites: ${namespace}/${main_vsite}
 spec:
   type: ClusterIP
   selector:
@@ -124,7 +130,8 @@ kind: Deployment
 metadata:
   name: productcatalogservice
   annotations:
-    ves.io/workload-flavor: small
+    ves.io/workload-flavor: medium
+    ves.io/virtual-sites: ${namespace}/${main_vsite}
 spec:
   selector:
     matchLabels:
@@ -143,6 +150,8 @@ spec:
         env:
         - name: PORT
           value: "3550"
+        - name: ENABLE_PROFILER
+          value: "0"
         readinessProbe:
           exec:
             command: ["/bin/grpc_health_probe", "-addr=:3550"]
@@ -159,6 +168,7 @@ metadata:
   annotations:
     ves.io/proxy-type: HTTP_PROXY
     ves.io/http2-enable: "true"
+    ves.io/virtual-sites: ${namespace}/${main_vsite}
 spec:
   type: ClusterIP
   selector:
@@ -173,7 +183,8 @@ kind: Deployment
 metadata:
   name: cartservice
   annotations:
-    ves.io/workload-flavor: small
+    ves.io/workload-flavor: medium
+    ves.io/virtual-sites: ${namespace}/${main_vsite}
 spec:
   selector:
     matchLabels:
@@ -191,11 +202,13 @@ spec:
         - containerPort: 7070
         env:
         - name: REDIS_ADDR
-          value: "redis-cart:6379"
+          value: "redis-cart.internal:6379"
         - name: PORT
           value: "7070"
         - name: LISTEN_ADDR
           value: "0.0.0.0"
+        - name: ENABLE_PROFILER
+          value: "0"
         readinessProbe:
           initialDelaySeconds: 15
           exec:
@@ -215,6 +228,7 @@ metadata:
   annotations:
     ves.io/proxy-type: HTTP_PROXY
     ves.io/http2-enable: "true"
+    ves.io/virtual-sites: ${namespace}/${main_vsite}
 spec:
   type: ClusterIP
   selector:
@@ -229,7 +243,8 @@ kind: Deployment
 metadata:
   name: currencyservice
   annotations:
-    ves.io/workload-flavor: small
+    ves.io/workload-flavor: tiny
+    ves.io/virtual-sites: ${namespace}/${main_vsite}
 spec:
   selector:
     matchLabels:
@@ -249,6 +264,8 @@ spec:
         env:
         - name: PORT
           value: "7000"
+        - name: ENABLE_PROFILER
+          value: "0"
         readinessProbe:
           exec:
             command: ["/bin/grpc_health_probe", "-addr=:7000"]
@@ -265,6 +282,7 @@ metadata:
   annotations:
     ves.io/proxy-type: HTTP_PROXY
     ves.io/http2-enable: "true"
+    ves.io/virtual-sites: ${namespace}/${main_vsite}
 spec:
   type: ClusterIP
   selector:
@@ -279,7 +297,8 @@ kind: Deployment
 metadata:
   name: shippingservice
   annotations:
-    ves.io/workload-flavor: small
+    ves.io/workload-flavor: tiny
+    ves.io/virtual-sites: ${namespace}/${main_vsite}
 spec:
   selector:
     matchLabels:
@@ -297,6 +316,8 @@ spec:
         env:
         - name: PORT
           value: "50051"
+        - name: ENABLE_PROFILER
+          value: "0"
         readinessProbe:
           periodSeconds: 5
           exec:
@@ -314,6 +335,7 @@ metadata:
   annotations:
     ves.io/proxy-type: HTTP_PROXY
     ves.io/http2-enable: "true"
+    ves.io/virtual-sites: ${namespace}/${main_vsite}
 spec:
   type: ClusterIP
   selector:
@@ -328,7 +350,8 @@ kind: Deployment
 metadata:
   name: recommendationservice
   annotations:
-    ves.io/workload-flavor: small
+    ves.io/workload-flavor: medium
+    ves.io/virtual-sites: ${namespace}/${main_vsite}
 spec:
   selector:
     matchLabels:
@@ -369,6 +392,7 @@ metadata:
   annotations:
     ves.io/proxy-type: HTTP_PROXY
     ves.io/http2-enable: "true"
+    ves.io/virtual-sites: ${namespace}/${main_vsite}
 spec:
   ports:
     - name: grpc
@@ -382,6 +406,9 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: checkoutservice
+  annotations:
+    ves.io/workload-flavor: tiny
+    ves.io/virtual-sites: ${namespace}/${main_vsite}
 spec:
   selector:
     matchLabels:
@@ -405,6 +432,8 @@ spec:
           env:
           - name: PORT
             value: "5050"
+          - name: ENABLE_PROFILER
+            value: "0"
           - name: PRODUCT_CATALOG_SERVICE_ADDR
             value: "productcatalogservice:3550"
           - name: SHIPPING_SERVICE_ADDR
@@ -427,6 +456,7 @@ metadata:
   annotations:
     ves.io/proxy-type: HTTP_PROXY
     ves.io/http2-enable: "true"
+    ves.io/virtual-sites: ${namespace}/${main_vsite}
 spec:
   type: ClusterIP
   selector:
@@ -440,6 +470,9 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: frontend
+  annotations:
+    ves.io/workload-flavor: medium
+    ves.io/virtual-sites: ${namespace}/${main_vsite}
 spec:
   selector:
     matchLabels:
@@ -457,6 +490,8 @@ spec:
           env:
           - name: PORT
             value: "8080"
+          - name: ENABLE_PROFILER
+            value: "0"
           - name: PRODUCT_CATALOG_SERVICE_ADDR
             value: "productcatalogservice:3550"
           - name: CURRENCY_SERVICE_ADDR
@@ -478,6 +513,7 @@ metadata:
   name: frontend
   annotations:
     ves.io/proxy-type: HTTP_PROXY
+    ves.io/virtual-sites: ${namespace}/${main_vsite}
   labels:
     app: frontend
     svc_name: frontend
@@ -494,7 +530,8 @@ kind: Deployment
 metadata:
   name: redis-cart
   annotations:
-    ves.io/workload-flavor: small
+    ves.io/workload-flavor: medium
+    ves.io/virtual-sites: ${namespace}/${state_vsite}
 spec:
   selector:
     matchLabels:
@@ -521,6 +558,8 @@ apiVersion: v1
 kind: Service
 metadata:
   name: redis-cart
+  annotations:
+    ves.io/virtual-sites: ${namespace}/${state_vsite}
 spec:
   type: ClusterIP
   selector:
