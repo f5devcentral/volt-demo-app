@@ -64,7 +64,7 @@ resource "volterra_virtual_k8s" "vk8s" {
 //https://github.com/volterraedge/terraform-provider-volterra/issues/54
 resource "time_sleep" "vk8s_wait" {
   depends_on = [volterra_virtual_k8s.vk8s]
-  create_duration = "90s"
+  create_duration = "120s"
 }
 
 resource "volterra_api_credential" "cred" {
