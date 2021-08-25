@@ -3,9 +3,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: role-pod-cleaner
 rules:
-- apiGroups:
-  - extensions
-  - apps
+- apiGroups: [""]
   resources:
   - deployments
   - pods
@@ -42,7 +40,7 @@ metadata:
     ves.io/workload-flavor: tiny
     ves.io/virtual-sites: ${namespace}/${main_vsite}
 spec:
-  schedule: "*/30 * * * *"
+  schedule: "*/10 * * * *"
   jobTemplate:
     spec:
       template:
@@ -54,5 +52,7 @@ spec:
             command:
             - /bin/sh
             - -c
-            - kubectl delete pods --field-selector=status.phase=Evicted -n ${namespace}
+            - kubectl version
+            - kubectl config view
+            - kubectl delete pods --field-selector=status.phase=Failed,status.phase=Error -n ${namespace}
           restartPolicy: Never
