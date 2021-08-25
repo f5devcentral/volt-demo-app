@@ -23,7 +23,7 @@ spec:
               terminationMessagePath: /dev/termination-log
               terminationMessagePolicy: File
               imagePullPolicy: Always
-          restartPolicy: Never
+          restartPolicy: OnFailure
           backoffLimit: 1
           terminationGracePeriodSeconds: 30
           dnsPolicy: ClusterFirst
