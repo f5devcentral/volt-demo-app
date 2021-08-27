@@ -207,6 +207,7 @@ resource "volterra_tcp_loadbalancer" "redis" {
   domains                         = ["redis-cart.internal"]
   dns_volterra_managed            = false
   listen_port                     = 6379
+  labels                          = { "ves.io/app_type" = volterra_app_type.at.name }
   origin_pools_weights {
     pool {
       name      = volterra_origin_pool.redis.name
