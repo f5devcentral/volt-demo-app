@@ -126,18 +126,18 @@ resource "volterra_origin_pool" "frontend" {
   endpoint_selection = "LOCAL_PREFERRED"
 }
 
-resource "volterra_origin_pool" "redis" {
-  name                   = format("%s-redis", var.base)
+resource "volterra_origin_pool" "cart" {
+  name                   = format("%s-cart", var.base)
   namespace              = volterra_namespace.ns.name
   depends_on             = [time_sleep.ns_wait]
-  description            = format("Origin pool pointing to redis k8s service running in state-vsite")
+  description            = format("Origin pool pointing to cart k8s service running in state-vsite")
   loadbalancer_algorithm = "ROUND ROBIN"
   origin_servers {
     k8s_service {
       inside_network  = false
       outside_network = false
       vk8s_networks   = true
-      service_name    = format("redis-cart.%s", volterra_namespace.ns.name)
+      service_name    = format("cartservice.%s", volterra_namespace.ns.name)
       site_locator {
         virtual_site {
           name      = volterra_virtual_site.state.name
@@ -199,18 +199,18 @@ resource "volterra_http_loadbalancer" "frontend" {
   no_challenge                    = true
 }
 
-resource "volterra_tcp_loadbalancer" "redis" {
-  name                            = format("%s-redis", var.base)
+resource "volterra_tcp_loadbalancer" "cart" {
+  name                            = format("%s-cart", var.base)
   namespace                       = volterra_namespace.ns.name
   depends_on                      = [time_sleep.ns_wait]
-  description                     = format("TCP loadbalancer object for %s redis service", var.base)
-  domains                         = ["redis-cart.internal"]
+  description                     = format("TCP loadbalancer object for %s cart service", var.base)
+  domains                         = ["cart.internal"]
   dns_volterra_managed            = false
-  listen_port                     = 6379
+  listen_port                     = 7070
   labels                          = { "ves.io/app_type" = volterra_app_type.at.name }
   origin_pools_weights {
     pool {
-      name      = volterra_origin_pool.redis.name
+      name      = volterra_origin_pool.cart.name
       namespace = volterra_namespace.ns.name
     }
   }
@@ -222,7 +222,7 @@ resource "volterra_tcp_loadbalancer" "redis" {
           namespace = volterra_namespace.ns.name
         }
       }
-    port = 6379
+    port = 7070
     }
   }
   retract_cluster = true

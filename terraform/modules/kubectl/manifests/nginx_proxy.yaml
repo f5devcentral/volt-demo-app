@@ -1,0 +1,86 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-conf
+  annotations:
+    ves.io/virtual-sites: ${namespace}/${main_vsite}
+data:
+  nginx.conf: |
+    user nginx;
+    worker_processes  1;
+    events {
+      worker_connections  10240;
+    }
+    http {
+      map $sent_http_content_type $expires {
+          default                    off;
+          text/html                  epoch;
+          text/css                   max;
+          application/javascript     max;
+          ~image/                    max;
+      }
+      server {
+        listen 8080 default_server;
+        listen [::]:8080 default_server;
+
+        expires $expires;
+        location / {
+          proxy_pass http://frontend:8080/;
+        }
+      }
+    }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+  annotations:
+    ves.io/workload-flavor: tiny
+    ves.io/virtual-sites: ${namespace}/${main_vsite}
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: ${reg_server}/nginx
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+            - name: nginx-conf
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+              readOnly: true
+      imagePullSecrets:
+        - name: registry-secret
+      volumes:
+      - name: nginx-conf
+        configMap:
+          name: nginx-conf
+          items:
+            - key: nginx.conf
+              path: nginx.conf
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx
+  labels:
+    app: nginx
+    svc_name: nginx
+  annotations:
+    ves.io/proxy-type: HTTP_PROXY
+    ves.io/virtual-sites: ${namespace}/${main_vsite}
+spec:
+  selector:
+    app: nginx
+  ports:
+  - name: nginx
+    port: 80
+    targetPort: 8080
