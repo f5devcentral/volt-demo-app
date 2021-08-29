@@ -8,6 +8,7 @@ spec:
   schedule: "*/6 * * * *"
   jobTemplate:
     spec:
+      ttlSecondsAfterFinished: 60
       template:
         metadata:
           annotations:
