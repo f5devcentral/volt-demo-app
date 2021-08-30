@@ -11,6 +11,7 @@ module "volterra" {
   api_p12_file = var.api_p12_file
   main_site_selector = var.main_site_selector
   state_site_selector = var.state_site_selector
+  cred_expiry_days = var.cred_expiry_days
 }
  
 module "kubectl" {
