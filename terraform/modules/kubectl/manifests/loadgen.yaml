@@ -6,9 +6,10 @@ metadata:
     ves.io/virtual-sites: ${namespace}/${state_vsite}
 spec:
   schedule: "*/6 * * * *"
+  successfulJobsHistoryLimit: 0
+  failedJobsHistoryLimit: 1
   jobTemplate:
     spec:
-      ttlSecondsAfterFinished: 60
       template:
         metadata:
           annotations:

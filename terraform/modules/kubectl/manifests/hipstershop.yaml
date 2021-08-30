@@ -23,6 +23,7 @@ metadata:
   annotations:
     ves.io/workload-flavor: tiny
     ves.io/virtual-sites: ${namespace}/${main_vsite}
+    ves.io/wingman-injection-mode: disable
 spec:
   selector:
     matchLabels:
@@ -79,6 +80,7 @@ metadata:
   annotations:
     ves.io/workload-flavor: tiny
     ves.io/virtual-sites: ${namespace}/${main_vsite}
+    ves.io/wingman-injection-mode: disable
 spec:
   selector:
     matchLabels:
@@ -130,8 +132,9 @@ kind: Deployment
 metadata:
   name: productcatalogservice
   annotations:
-    ves.io/workload-flavor: medium
+    ves.io/workload-flavor: tiny
     ves.io/virtual-sites: ${namespace}/${main_vsite}
+    ves.io/wingman-injection-mode: disable
 spec:
   selector:
     matchLabels:
@@ -183,8 +186,9 @@ kind: Deployment
 metadata:
   name: cartservice
   annotations:
-    ves.io/workload-flavor: medium
+    ves.io/workload-flavor: tiny
     ves.io/virtual-sites: ${namespace}/${main_vsite}
+    ves.io/wingman-injection-mode: disable
 spec:
   selector:
     matchLabels:
@@ -243,8 +247,9 @@ kind: Deployment
 metadata:
   name: currencyservice
   annotations:
-    ves.io/workload-flavor: medium
+    ves.io/workload-flavor: tiny
     ves.io/virtual-sites: ${namespace}/${main_vsite}
+    ves.io/wingman-injection-mode: disable
 spec:
   selector:
     matchLabels:
@@ -299,6 +304,7 @@ metadata:
   annotations:
     ves.io/workload-flavor: tiny
     ves.io/virtual-sites: ${namespace}/${main_vsite}
+    ves.io/wingman-injection-mode: disable
 spec:
   selector:
     matchLabels:
@@ -350,8 +356,9 @@ kind: Deployment
 metadata:
   name: recommendationservice
   annotations:
-    ves.io/workload-flavor: medium
+    ves.io/workload-flavor: tiny
     ves.io/virtual-sites: ${namespace}/${main_vsite}
+    ves.io/wingman-injection-mode: disable
 spec:
   selector:
     matchLabels:
@@ -409,6 +416,7 @@ metadata:
   annotations:
     ves.io/workload-flavor: tiny
     ves.io/virtual-sites: ${namespace}/${main_vsite}
+    ves.io/wingman-injection-mode: disable
 spec:
   selector:
     matchLabels:
@@ -473,6 +481,7 @@ metadata:
   annotations:
     ves.io/workload-flavor: tiny
     ves.io/virtual-sites: ${namespace}/${main_vsite}
+    ves.io/wingman-injection-mode: disable
 spec:
   selector:
     matchLabels:
@@ -526,8 +535,9 @@ kind: Deployment
 metadata:
   name: frontend
   annotations:
-    ves.io/workload-flavor: medium
+    ves.io/workload-flavor: tiny
     ves.io/virtual-sites: ${namespace}/${main_vsite}
+    ves.io/wingman-injection-mode: disable
 spec:
   selector:
     matchLabels:
