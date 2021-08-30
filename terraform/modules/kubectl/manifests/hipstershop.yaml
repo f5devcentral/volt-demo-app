@@ -585,7 +585,7 @@ kind: Deployment
 metadata:
   name: redis-cart
   annotations:
-    ves.io/workload-flavor: medium
+    ves.io/workload-flavor: tiny
     ves.io/virtual-sites: ${namespace}/${state_vsite}
 spec:
   selector:
@@ -598,7 +598,7 @@ spec:
         app: redis-cart
     spec:
       containers:
-      - name: master
+      - name: server
         image: k8s.gcr.io/redis:e2e
         ports:
         - containerPort: 6379
