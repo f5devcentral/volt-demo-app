@@ -23,7 +23,6 @@ metadata:
   annotations:
     ves.io/workload-flavor: tiny
     ves.io/virtual-sites: ${namespace}/${main_vsite}
-    ves.io/wingman-injection-mode: disable
 spec:
   selector:
     matchLabels:
@@ -80,7 +79,6 @@ metadata:
   annotations:
     ves.io/workload-flavor: tiny
     ves.io/virtual-sites: ${namespace}/${main_vsite}
-    ves.io/wingman-injection-mode: disable
 spec:
   selector:
     matchLabels:
@@ -134,7 +132,6 @@ metadata:
   annotations:
     ves.io/workload-flavor: tiny
     ves.io/virtual-sites: ${namespace}/${main_vsite}
-    ves.io/wingman-injection-mode: disable
 spec:
   selector:
     matchLabels:
@@ -188,7 +185,6 @@ metadata:
   annotations:
     ves.io/workload-flavor: tiny
     ves.io/virtual-sites: ${namespace}/${main_vsite}
-    ves.io/wingman-injection-mode: disable
 spec:
   selector:
     matchLabels:
@@ -249,7 +245,6 @@ metadata:
   annotations:
     ves.io/workload-flavor: tiny
     ves.io/virtual-sites: ${namespace}/${main_vsite}
-    ves.io/wingman-injection-mode: disable
 spec:
   selector:
     matchLabels:
@@ -304,7 +299,6 @@ metadata:
   annotations:
     ves.io/workload-flavor: tiny
     ves.io/virtual-sites: ${namespace}/${main_vsite}
-    ves.io/wingman-injection-mode: disable
 spec:
   selector:
     matchLabels:
@@ -358,7 +352,6 @@ metadata:
   annotations:
     ves.io/workload-flavor: tiny
     ves.io/virtual-sites: ${namespace}/${main_vsite}
-    ves.io/wingman-injection-mode: disable
 spec:
   selector:
     matchLabels:
@@ -416,7 +409,6 @@ metadata:
   annotations:
     ves.io/workload-flavor: tiny
     ves.io/virtual-sites: ${namespace}/${main_vsite}
-    ves.io/wingman-injection-mode: disable
 spec:
   selector:
     matchLabels:
@@ -481,7 +473,6 @@ metadata:
   annotations:
     ves.io/workload-flavor: tiny
     ves.io/virtual-sites: ${namespace}/${main_vsite}
-    ves.io/wingman-injection-mode: disable
 spec:
   selector:
     matchLabels:
@@ -537,7 +528,6 @@ metadata:
   annotations:
     ves.io/workload-flavor: tiny
     ves.io/virtual-sites: ${namespace}/${main_vsite}
-    ves.io/wingman-injection-mode: disable
 spec:
   selector:
     matchLabels:
