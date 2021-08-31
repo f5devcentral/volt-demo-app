@@ -102,6 +102,39 @@ resource "volterra_app_type" "at" {
   }
 }
 
+resource "volterra_app_setting" "as" {
+  name      = var.base
+  namespace = volterra_namespace.ns.name
+
+  app_type_settings {
+    app_type_ref {
+      name      = volterra_app_type.at.name
+      namespace = volterra_app_type.at.namespace
+    }
+    business_logic_markup_setting {
+      enable = true
+    }
+    timeseries_analyses_setting {
+      metric_selectors {
+        metric         = ["REQUEST_RATE", "ERROR_RATE", "LATENCY", "THROUGHPUT"]
+        metrics_source = "NODES"
+      }
+    }
+    user_behavior_analysis_setting {
+      enable_learning = true
+      enable_detection {
+        cooling_off_period = 20
+        exclude_failed_login_activity {
+        }
+        include_forbidden_activity {
+          forbidden_requests_threshold = 10
+        }
+        include_waf_activity = true
+      }
+    }
+  }
+}
+
 resource "volterra_origin_pool" "frontend" {
   name                   = format("%s-frontend", var.base)
   namespace              = volterra_namespace.ns.name
