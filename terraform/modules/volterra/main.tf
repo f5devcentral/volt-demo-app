@@ -2,7 +2,7 @@ terraform {
   required_providers {
     volterra = {
       source = "volterraedge/volterra"
-      version = "0.8.1"
+      version = "0.10.0"
     }
   }
 }
@@ -67,16 +67,17 @@ resource "time_sleep" "vk8s_wait" {
   create_duration = "120s"
 }
 
-resource "volterra_api_credential" "cred" {
+resource "volterra_api_credential" "vk8s_cred" {
   name      = format("%s-api-cred", var.base)
   api_credential_type = "KUBE_CONFIG"
   virtual_k8s_namespace = volterra_namespace.ns.name
   virtual_k8s_name = volterra_virtual_k8s.vk8s.name
+  expiry_days = var.cred_expiry_days
   depends_on = [time_sleep.vk8s_wait]
 }
 
 resource "local_file" "kubeconfig" {
-    content = base64decode(volterra_api_credential.cred.data)
+    content = base64decode(volterra_api_credential.vk8s_cred.data)
     filename = format("%s/../../creds/%s", path.module, format("%s-vk8s.yaml", terraform.workspace))
 }
 
@@ -98,6 +99,38 @@ resource "volterra_app_type" "at" {
   }
   business_logic_markup_setting {
     enable = true
+  }
+}
+
+resource "volterra_app_setting" "as" {
+  name      = var.base
+  namespace = volterra_namespace.ns.name
+
+  app_type_settings {
+    app_type_ref {
+      name      = volterra_app_type.at.name
+      namespace = volterra_app_type.at.namespace
+    }
+    business_logic_markup_setting {
+      enable = true
+    }
+    timeseries_analyses_setting {
+      metric_selectors {
+        metric         = ["REQUEST_RATE", "ERROR_RATE", "LATENCY", "THROUGHPUT"]
+        metrics_source = "NODES"
+      }
+    }
+    user_behavior_analysis_setting {
+      enable_learning = true
+      enable_detection {
+        cooling_off_period = 20
+        include_forbidden_activity {
+          forbidden_requests_threshold = 10
+        }
+        exclude_failed_login_activity = true
+        include_waf_activity = true
+      }
+    }
   }
 }
 

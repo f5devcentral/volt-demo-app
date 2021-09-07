@@ -22,6 +22,10 @@ variable "state_site_selector" {
   default = ["ves.io/siteName in (ves-io-dc12-ash)"]
 }
 
+variable "cred_expiry_days" {
+  default = 89
+}
+
 variable "registry_password" {
     default = "2string:///some_b64e_password"
 }
