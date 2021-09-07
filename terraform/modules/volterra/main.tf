@@ -124,11 +124,10 @@ resource "volterra_app_setting" "as" {
       enable_learning = true
       enable_detection {
         cooling_off_period = 20
-        exclude_failed_login_activity {
-        }
         include_forbidden_activity {
           forbidden_requests_threshold = 10
         }
+        exclude_failed_login_activity = true
         include_waf_activity = true
       }
     }
