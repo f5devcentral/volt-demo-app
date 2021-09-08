@@ -14,9 +14,12 @@ The app consists of 11 microservices that talk to each other over gRPC.
 
 ![demo arch](https://github.com/GoogleCloudPlatform/microservices-demo/blob/master/docs/img/architecture-diagram.png)
 
-## Instructions for use
+## About the architecture
 
-- Obtain an API certificate from your target Volterra tenant. This should be in .p12 format. 
-- Create a ``tfvars`` file (look at [example.tfvars](terraform/tfvars/example.tfvars) for the info needed)
-
-*Note: You'll need to provide the p12 certification password via an env variable name ''VES_P12_PASSWORD'' in your Terraform execution environment.*
+The demo application's microservices are distributed across multiple [virtual sites](https://www.volterra.io/docs/ves-concepts/volterra-site#virtual-site).
+Internet traffic ingresses through the nearest Volterra POP via an [HTTP loadbalancer](https://www.volterra.io/docs/how-to/app-networking/http-load-balancer). 
+Traffic is routed to the "frontend" microservice which is running the "main" virtual site.
+The "main" virtual site consists of 2 Regional Edges (the specific REs depends on the tenant/deployment). 
+The "frontend" microservice routes to various secondary microservices in the same virtual site as needed. 
+The demo application keeps state in a redis database running in the second "state" virtual site.
+The state service is presented to the other microservices through a [TCP loadbalancer](https://www.volterra.io/docs/how-to/app-networking/tcp-load-balancer).
