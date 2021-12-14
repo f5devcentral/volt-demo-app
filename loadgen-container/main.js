@@ -1,6 +1,7 @@
 import { sleep } from "k6";
 
 import { crawler } from "./crawler.js";
+import { bot } from "./bot.js";
 import { exploit } from "./exploit.js";
 import { synthetic } from "./synthetic.js";
 
@@ -19,8 +20,9 @@ function getRandom(min, max) {
   }
 
 export default function main() {
-  crawler();
   exploit();
   synthetic();
+  crawler();
+  bot();
   sleep(getRandom(2, 5));
 }

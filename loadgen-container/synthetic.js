@@ -10,31 +10,31 @@ export function synthetic() {
     //Get a product
     let products = doc.find("a").toArray()
     products = products.filter(item => item.attr("href") !== "/cart")
-    var product = products[Math.floor(Math.random()*products.length)]
+    var product = products[Math.floor(Math.random()*products.length)] || "/product/0PUK6V6EV0" //if we were blocked, use a dummy product
     //Add to Cart
     let data = {
       product_id: product.attr("href").split("/").pop(),
       quantity: 1
     };
-    res = http.post(base.concat("/cart"), data);
+    res = http.post(base.concat("/cart"), data, addRandAgent());
     check(res, {
       'status is 200': (r) => r.status === 200
     });
     sleep(.2);
     //Checkout
     data = {
-      email: "someone@example.com",
-      street_address: "1600 Amphitheatre Parkway",
-      zip_code: "94043",
-      city: "Mountain View",
-      state: "CA",
+      email: "someone@f5.com",
+      street_address: "801 5th Avenue",
+      zip_code: "98104",
+      city: "Seattle",
+      state: "WA",
       country: "United States",
       credit_card_number: "4432-8015-6152-0454",
       credit_card_expiration_month: 1,
       credit_card_expiration_year: 2024,
       credit_card_cvv: 789
     };
-    res = http.post(base.concat("/cart/checkout"), data);
+    res = http.post(base.concat("/cart/checkout"), data, addRandAgent());
     check(res, {
       'status is 200': (r) => r.status === 200
     });
