@@ -10,7 +10,7 @@ export function synthetic() {
     //Get a product
     let products = doc.find("a").toArray()
     products = products.filter(item => item.attr("href") !== "/cart")
-    var product = products[Math.floor(Math.random()*products.length)]
+    var product = products[Math.floor(Math.random()*products.length)] || "/product/0PUK6V6EV0" //if we were blocked, use a dummy product
     //Add to Cart
     let data = {
       product_id: product.attr("href").split("/").pop(),
