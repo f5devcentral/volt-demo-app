@@ -224,9 +224,10 @@ resource "volterra_http_loadbalancer" "frontend" {
     }
   }
   https_auto_cert {
-    add_hsts      = false
-    http_redirect = true
-    no_mtls       = true
+    add_hsts              = false
+    http_redirect         = true
+    no_mtls               = true
+    enable_path_normalize = true
   }
   single_lb_app {
     enable_discovery {
