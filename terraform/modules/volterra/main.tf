@@ -184,22 +184,29 @@ resource "volterra_origin_pool" "redis" {
   endpoint_selection = "LOCAL_PREFERRED"
 }
 
-resource "volterra_waf" "waf" {
-  name        = format("%s-waf", var.base)
-  description = format("WAF in block mode for %s", var.base)
+resource "volterra_user_identification" "ui" {
+  name        = format("%s-user-id", var.base)
+  description = format("User Idenfication for %s", var.base)
   namespace   = volterra_namespace.ns.name
   depends_on = [time_sleep.ns_wait]
-  app_profile {
-    cms       = []
-    language  = []
-    webserver = []
+
+  rules {
+    cookie_name = "shop_session-id"
   }
-  mode = "BLOCK"
-  lifecycle {
-    ignore_changes = [
-      app_profile
-    ]
-  }
+}
+
+resource "volterra_app_firewall" "af" {
+  name        = format("%s-app-firewall", var.base)
+  description = format("App Firewall in blocking mode for %s", var.base)
+  namespace   = volterra_namespace.ns.name
+  depends_on = [time_sleep.ns_wait]
+
+  allow_all_response_codes = true
+  default_anonymization = true
+  use_default_blocking_page = true
+  default_bot_setting = true
+  default_detection_settings = true
+  use_loadbalancer_setting = true
 }
 
 resource "volterra_http_loadbalancer" "frontend" {
@@ -221,11 +228,21 @@ resource "volterra_http_loadbalancer" "frontend" {
     http_redirect = true
     no_mtls       = true
   }
-  waf {
-    name      = volterra_waf.waf.name
+  single_lb_app {
+    enable_discovery {
+      disable_learn_from_redirect_traffic = true
+    }
+    enable_ddos_detection = true
+    enable_malicious_user_detection = true
+  }
+  app_firewall {
+    name      = volterra_app_firewall.af.name
     namespace = volterra_namespace.ns.name
   }
-  disable_waf                     = false
+  user_identification {
+    name      = volterra_user_identification.ui.name
+    namespace = volterra_namespace.ns.name
+  }
   disable_rate_limit              = true
   round_robin                     = true
   service_policies_from_namespace = true
