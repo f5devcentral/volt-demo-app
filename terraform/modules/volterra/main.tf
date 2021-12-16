@@ -206,7 +206,7 @@ resource "volterra_app_firewall" "af" {
   use_default_blocking_page = true
   default_bot_setting = true
   default_detection_settings = true
-  use_loadbalancer_setting = true
+  blocking = true
 }
 
 resource "volterra_http_loadbalancer" "frontend" {
@@ -229,13 +229,7 @@ resource "volterra_http_loadbalancer" "frontend" {
     no_mtls               = true
     enable_path_normalize = true
   }
-  single_lb_app {
-    enable_discovery {
-      disable_learn_from_redirect_traffic = true
-    }
-    enable_ddos_detection = true
-    enable_malicious_user_detection = true
-  }
+  multi_lb_app = true
   app_firewall {
     name      = volterra_app_firewall.af.name
     namespace = volterra_namespace.ns.name
