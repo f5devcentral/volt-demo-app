@@ -234,6 +234,26 @@ resource "volterra_http_loadbalancer" "frontend" {
     name      = volterra_app_firewall.af.name
     namespace = volterra_namespace.ns.name
   }
+  bot_defense {
+    policy {
+      disable_js_insert       = true
+      js_insert_all_pages     = true
+      protected_app_endpoints {
+        path = "/*"
+        http_methods = ["GET", "POST"]
+        metadata {
+          name = "demo_app_bot_defense"  #TODO paramertize this var
+        }
+        mitigation {
+          block {
+            body = "This is a bot defense block page."
+          }
+        }
+      }
+    }
+    regional_endpoint = "US"  #TODO: add a variable for this. US, EU, or Asia (string).
+
+  }
   user_identification {
     name      = volterra_user_identification.ui.name
     namespace = volterra_namespace.ns.name
