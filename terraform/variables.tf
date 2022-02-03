@@ -37,3 +37,7 @@ variable "registry_username" {
 variable "registry_server" {
     default = "some_registry.example.com"
 }
+
+variable "bot_defense_region" {
+    default = "US"
+}

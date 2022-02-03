@@ -236,22 +236,29 @@ resource "volterra_http_loadbalancer" "frontend" {
   }
   bot_defense {
     policy {
-      disable_js_insert       = true
-      js_insert_all_pages     = true
+      disable_js_insert       = false
+      js_insert_all_pages {
+        javascript_location  = "After <head> tag"
+      }
       protected_app_endpoints {
-        path = "/*"
-        http_methods = ["GET", "POST"]
+        path {
+          path = "/cart"
+        }
+        web  = true
+        http_methods = ["POST"]
         metadata {
-          name = "demo_app_bot_defense"  #TODO paramertize this var
+          name = format("%s-bot-defense", var.base)
         }
         mitigation {
           block {
-            body = "This is a bot defense block page."
+            body = "string:///PHA+VGhpcyBpcyBhIGJvdCBkZWZlbnNlIGJsb2NrIHBhZ2UuPC9wPg==" 
+            #<p>This is a bot defense block page.</p>"
+            status = "BadRequest"
           }
         }
       }
     }
-    regional_endpoint = "US"  #TODO: add a variable for this. US, EU, or Asia (string).
+    regional_endpoint = var.bot_defense_region
 
   }
   user_identification {
