@@ -12,6 +12,7 @@ module "volterra" {
   main_site_selector = var.main_site_selector
   state_site_selector = var.state_site_selector
   cred_expiry_days = var.cred_expiry_days
+  bot_defense_region = var.bot_defense_region
 }
  
 module "kubectl" {

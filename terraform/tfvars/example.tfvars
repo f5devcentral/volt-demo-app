@@ -9,3 +9,5 @@ state_site_selector = ["ves.io/siteName in (ves-io-ams9-ams)"]
 registry_password = "2string:///some_b64e_password"
 registry_username = "user"
 registry_server = "registry.example.com"
+
+bot_def_region = "US"

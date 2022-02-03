@@ -2,7 +2,7 @@ terraform {
   required_providers {
     volterra = {
       source = "volterraedge/volterra"
-      version = "0.11.2"
+      version = "0.11.3"
     }
   }
 }
@@ -233,6 +233,33 @@ resource "volterra_http_loadbalancer" "frontend" {
   app_firewall {
     name      = volterra_app_firewall.af.name
     namespace = volterra_namespace.ns.name
+  }
+  bot_defense {
+    policy {
+      disable_js_insert       = false
+      js_insert_all_pages {
+        javascript_location  = "After <head> tag"
+      }
+      protected_app_endpoints {
+        path {
+          path = "/cart"
+        }
+        web  = true
+        http_methods = ["POST"]
+        metadata {
+          name = format("%s-bot-defense", var.base)
+        }
+        mitigation {
+          block {
+            body = "string:///PHA+VGhpcyBpcyBhIGJvdCBkZWZlbnNlIGJsb2NrIHBhZ2UuPC9wPg==" 
+            #<p>This is a bot defense block page.</p>"
+            status = "BadRequest"
+          }
+        }
+      }
+    }
+    regional_endpoint = var.bot_defense_region
+
   }
   user_identification {
     name      = volterra_user_identification.ui.name

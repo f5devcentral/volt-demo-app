@@ -18,3 +18,6 @@ variable "state_site_selector" {
 
 variable "cred_expiry_days" {    
 }
+
+variable "bot_defense_region" {
+}
