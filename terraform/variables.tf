@@ -22,6 +22,10 @@ variable "state_site_selector" {
   default = ["ves.io/siteName in (ves-io-dc12-ash)"]
 }
 
+variable "utility_site_selector" {
+  default = ["ves.io/siteName in (ves-io-dc12-ash)"]
+}
+
 variable "cred_expiry_days" {
   default = 89
 }

@@ -24,8 +24,10 @@ module "kubectl" {
   reg_username_b64 = base64encode(var.registry_username)
 
   namespace = module.volterra.namespace
+  utility_namespace = module.volterra.utility_namespace
   main_vsite = module.volterra.main_vsite
   state_vsite = module.volterra.state_vsite
+  utility_vsite = module.volterra.utility_vsite
   
   kubecfg = module.volterra.kubecfg
   target_url = module.volterra.app_url

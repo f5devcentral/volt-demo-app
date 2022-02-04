@@ -1,6 +1,10 @@
 # What's New
 This page will be updated after a branch PR is merged.
 
+## Friday, February 4, 2022
+
+- Upped 'Hipster shop' app to 'boutique' app
+
 ## Tuesday, February 3, 2022
 
 - Added "Bot Defense" profile

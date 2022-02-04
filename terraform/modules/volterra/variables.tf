@@ -16,6 +16,9 @@ variable "main_site_selector" {
 variable "state_site_selector" {
 }
 
+variable "utility_site_selector" {
+}
+
 variable "cred_expiry_days" {    
 }
 
