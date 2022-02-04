@@ -54,13 +54,6 @@ spec:
           periodSeconds: 5
           exec:
             command: ["/bin/grpc_health_probe", "-addr=:8080"]
-        resources:
-          requests:
-            cpu: 100m
-            memory: 64Mi
-          limits:
-            cpu: 200m
-            memory: 128Mi
 ---
 apiVersion: v1
 kind: Service
@@ -82,6 +75,7 @@ kind: Deployment
 metadata:
   name: checkoutservice
   annotations:
+    ves.io/workload-flavor: ves-io-tiny
     ves.io/virtual-sites: ${namespace}/${main_vsite}
 spec:
   selector:
@@ -125,13 +119,6 @@ spec:
             value: "1"
           - name: DISABLE_PROFILER
             value: "1"
-          resources:
-            requests:
-              cpu: 100m
-              memory: 64Mi
-            limits:
-              cpu: 200m
-              memory: 128Mi
 ---
 apiVersion: v1
 kind: Service
@@ -153,6 +140,7 @@ kind: Deployment
 metadata:
   name: recommendationservice
   annotations:
+    ves.io/workload-flavor: ves-io-tiny
     ves.io/virtual-sites: ${namespace}/${main_vsite}
 spec:
   selector:
@@ -189,13 +177,6 @@ spec:
           value: "1"
         - name: DISABLE_DEBUGGER
           value: "1"
-        resources:
-          requests:
-            cpu: 100m
-            memory: 220Mi
-          limits:
-            cpu: 200m
-            memory: 450Mi
 ---
 apiVersion: v1
 kind: Service
@@ -217,6 +198,7 @@ kind: Deployment
 metadata:
   name: frontend
   annotations:
+    ves.io/workload-flavor: ves-io-medium
     ves.io/virtual-sites: ${namespace}/${main_vsite}
 spec:
   selector:
@@ -270,13 +252,6 @@ spec:
             value: "1"
           - name: DISABLE_PROFILER
             value: "1"
-          resources:
-            requests:
-              cpu: 100m
-              memory: 64Mi
-            limits:
-              cpu: 200m
-              memory: 128Mi
 ---
 apiVersion: v1
 kind: Service
@@ -331,13 +306,6 @@ spec:
         livenessProbe:
           exec:
             command: ["/bin/grpc_health_probe", "-addr=:50051"]
-        resources:
-          requests:
-            cpu: 100m
-            memory: 64Mi
-          limits:
-            cpu: 200m
-            memory: 128Mi
 ---
 apiVersion: v1
 kind: Service
@@ -359,6 +327,7 @@ kind: Deployment
 metadata:
   name: productcatalogservice
   annotations:
+    ves.io/workload-flavor: ves-io-tiny
     ves.io/virtual-sites: ${namespace}/${main_vsite}
 spec:
   selector:
@@ -391,13 +360,6 @@ spec:
         livenessProbe:
           exec:
             command: ["/bin/grpc_health_probe", "-addr=:3550"]
-        resources:
-          requests:
-            cpu: 100m
-            memory: 64Mi
-          limits:
-            cpu: 200m
-            memory: 128Mi
 ---
 apiVersion: v1
 kind: Service
@@ -419,6 +381,7 @@ kind: Deployment
 metadata:
   name: cartservice
   annotations:
+    ves.io/workload-flavor: ves-io-medium
     ves.io/virtual-sites: ${namespace}/${main_vsite}
 spec:
   selector:
@@ -448,13 +411,6 @@ spec:
           periodSeconds: 30
           exec:
             command: ["/bin/grpc_health_probe", "-addr=:7070", "-rpc-timeout=10s"]
-        resources:
-          requests:
-            cpu: 300m
-            memory: 128Mi
-          limits:
-            cpu: 400m
-            memory: 192Mi
 ---
 apiVersion: v1
 kind: Service
@@ -476,6 +432,7 @@ kind: Deployment
 metadata:
   name: currencyservice
   annotations:
+    ves.io/workload-flavor: ves-io-tiny
     ves.io/virtual-sites: ${namespace}/${main_vsite}
 spec:
   selector:
@@ -509,13 +466,6 @@ spec:
         livenessProbe:
           exec:
             command: ["/bin/grpc_health_probe", "-addr=:7000"]
-        resources:
-          requests:
-            cpu: 100m
-            memory: 64Mi
-          limits:
-            cpu: 200m
-            memory: 128Mi
 ---
 apiVersion: v1
 kind: Service
@@ -537,6 +487,7 @@ kind: Deployment
 metadata:
   name: shippingservice
   annotations:
+    ves.io/workload-flavor: ves-io-tiny
     ves.io/virtual-sites: ${namespace}/${main_vsite}
 spec:
   selector:
@@ -569,13 +520,6 @@ spec:
         livenessProbe:
           exec:
             command: ["/bin/grpc_health_probe", "-addr=:50051"]
-        resources:
-          requests:
-            cpu: 100m
-            memory: 64Mi
-          limits:
-            cpu: 200m
-            memory: 128Mi
 ---
 apiVersion: v1
 kind: Service
@@ -595,6 +539,7 @@ kind: Deployment
 metadata:
   name: redis-cart
   annotations:
+    ves.io/workload-flavor: ves-io-medium
     ves.io/virtual-sites: ${namespace}/${state_vsite}
 spec:
   selector:
@@ -621,13 +566,6 @@ spec:
         volumeMounts:
         - mountPath: /data
           name: redis-data
-        resources:
-          limits:
-            memory: 256Mi
-            cpu: 125m
-          requests:
-            cpu: 70m
-            memory: 200Mi
       volumes:
       - name: redis-data
         emptyDir: {}
