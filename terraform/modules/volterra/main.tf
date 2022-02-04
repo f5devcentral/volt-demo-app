@@ -241,9 +241,13 @@ resource "volterra_http_loadbalancer" "frontend" {
         javascript_location  = "After <head> tag"
       }
       protected_app_endpoints {
-        path {
-          path = "/cart"
+        domain {
+          exact_value = var.app_fqdn
         }
+        path {
+          prefix = "/cart"
+        }
+        protocol = "https"
         web  = true
         http_methods = ["POST"]
         metadata {
@@ -258,6 +262,7 @@ resource "volterra_http_loadbalancer" "frontend" {
         }
       }
     }
+    timeout = 1000
     regional_endpoint = var.bot_defense_region
 
   }

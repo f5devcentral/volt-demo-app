@@ -1,6 +1,11 @@
 # What's New
 This page will be updated after a branch PR is merged.
 
+## Tuesday, February 3, 2022
+
+- Added "Bot Defense" profile
+  - [Bot Defense](https://www.volterra.io/docs/services/shape/bot-defense)
+  
 ## Tuesday, September 7, 2021
 
 - Added "App Setting" object
