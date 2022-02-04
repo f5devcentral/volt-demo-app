@@ -55,7 +55,7 @@ resource "volterra_virtual_site" "state" {
 }
 
 resource "volterra_virtual_site" "utility" {
-  name      = format("%s-state", volterra_namespace.utility_ns.name)
+  name      = format("%s-vs", volterra_namespace.utility_ns.name)
   namespace = volterra_namespace.utility_ns.name
   depends_on = [time_sleep.ns_utility_wait]
 
@@ -83,7 +83,7 @@ resource "volterra_virtual_k8s" "vk8s" {
 resource "volterra_virtual_k8s" "utility_vk8s" {
   name      = format("%s-utility-vk8s", volterra_namespace.utility_ns.name)
   namespace = volterra_namespace.utility_ns.name
-  depends_on = [time_sleep.utility_ns_wait]
+  depends_on = [time_sleep.ns_utility_wait]
 
   vsite_refs {
     name      = volterra_virtual_site.utility.name
@@ -128,7 +128,7 @@ resource "local_file" "kubeconfig" {
 
 resource "local_file" "utility_kubeconfig" {
     content = base64decode(volterra_api_credential.utility_vk8s_cred.data)
-    filename = format("%s/../../creds/%s", path.module, format("%sutility-vk8s.yaml", terraform.workspace))
+    filename = format("%s/../../creds/%s", path.module, format("%s-utility-vk8s.yaml", terraform.workspace))
 }
 
 resource "volterra_app_type" "at" {
