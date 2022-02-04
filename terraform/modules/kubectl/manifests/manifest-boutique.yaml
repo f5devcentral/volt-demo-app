@@ -21,6 +21,7 @@ kind: Deployment
 metadata:
   name: emailservice
   annotations:
+    ves.io/workload-flavor: ves-io-tiny
     ves.io/virtual-sites: ${namespace}/${main_vsite}
 spec:
   selector:
@@ -449,11 +450,11 @@ spec:
             command: ["/bin/grpc_health_probe", "-addr=:7070", "-rpc-timeout=10s"]
         resources:
           requests:
-            cpu: 200m
-            memory: 64Mi
-          limits:
             cpu: 300m
             memory: 128Mi
+          limits:
+            cpu: 400m
+            memory: 192Mi
 ---
 apiVersion: v1
 kind: Service
