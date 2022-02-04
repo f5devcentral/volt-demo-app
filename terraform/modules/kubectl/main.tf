@@ -44,7 +44,6 @@ resource "kubectl_manifest" "secret" {
 
 resource "kubectl_manifest" "manifests" {
     depends_on = [kubectl_manifest.secret]
-    force_new = true
     count     = length(data.kubectl_path_documents.manifests.documents)
     yaml_body = element(data.kubectl_path_documents.manifests.documents, count.index)
     override_namespace = var.namespace
