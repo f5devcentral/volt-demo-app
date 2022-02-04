@@ -37,15 +37,15 @@ data "kubectl_path_documents" "manifests" {
 }
 
 resource "kubectl_manifest" "secret" {
-    for_each  = toset(data.kubectl_path_documents.secret.documents)
-    yaml_body = each.value
+    count     = length(data.kubectl_path_documents.secret.documents)
+    yaml_body = element(data.kubectl_path_documents.secret.documents, count.index)
     override_namespace = var.namespace
 }
 
 resource "kubectl_manifest" "manifests" {
     depends_on = [kubectl_manifest.secret]
     force_new = true
-    for_each  = toset(data.kubectl_path_documents.manifests.documents)
-    yaml_body = each.value
+    count     = length(data.kubectl_path_documents.manifests.documents)
+    yaml_body = element(data.kubectl_path_documents.manifests.documents, count.index)
     override_namespace = var.namespace
 }
