@@ -81,7 +81,7 @@ resource "volterra_virtual_k8s" "vk8s" {
 }
 
 resource "volterra_virtual_k8s" "utility_vk8s" {
-  name      = format("%s-utility-vk8s", volterra_namespace.utility_ns.name)
+  name      = format("%s-vk8s", volterra_namespace.utility_ns.name)
   namespace = volterra_namespace.utility_ns.name
   depends_on = [time_sleep.ns_utility_wait]
 
