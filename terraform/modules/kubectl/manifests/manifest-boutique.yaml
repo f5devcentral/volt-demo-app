@@ -124,8 +124,6 @@ spec:
             value: "1"
           - name: DISABLE_PROFILER
             value: "1"
-          # - name: JAEGER_SERVICE_ADDR
-          #   value: "jaeger-collector:14268"
           resources:
             requests:
               cpu: 100m
@@ -267,18 +265,10 @@ spec:
             value: "checkoutservice:5050"
           - name: AD_SERVICE_ADDR
             value: "adservice:9555"
-          # # ENV_PLATFORM: One of: local, gcp, aws, azure, onprem, alibaba
-          # # When not set, defaults to "local" unless running in GKE, otherwies auto-sets to gcp 
-          # - name: ENV_PLATFORM 
-          #   value: "aws"
           - name: DISABLE_TRACING
             value: "1"
           - name: DISABLE_PROFILER
             value: "1"
-          # - name: JAEGER_SERVICE_ADDR
-          #   value: "jaeger-collector:14268"
-          # - name: CYMBAL_BRANDING
-          #   value: "true"
           resources:
             requests:
               cpu: 100m
@@ -394,8 +384,6 @@ spec:
           value: "1"
         - name: DISABLE_PROFILER
           value: "1"
-        # - name: JAEGER_SERVICE_ADDR
-        #   value: "jaeger-collector:14268"
         readinessProbe:
           exec:
             command: ["/bin/grpc_health_probe", "-addr=:3550"]
@@ -450,15 +438,15 @@ spec:
         env:
         - name: REDIS_ADDR
           value: "redis-cart.internal:6379"
-        #readinessProbe:
-        #  initialDelaySeconds: 60
-        #  exec:
-        #    command: ["/bin/grpc_health_probe", "-addr=:7070", "-rpc-timeout=10s"]
-        #livenessProbe:
-        #  initialDelaySeconds: 60
-        #  periodSeconds: 30
-        #  exec:
-        #    command: ["/bin/grpc_health_probe", "-addr=:7070", "-rpc-timeout=10s"]
+        readinessProbe:
+          initialDelaySeconds: 60
+          exec:
+            command: ["/bin/grpc_health_probe", "-addr=:7070", "-rpc-timeout=10s"]
+        livenessProbe:
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          exec:
+            command: ["/bin/grpc_health_probe", "-addr=:7070", "-rpc-timeout=10s"]
         resources:
           requests:
             cpu: 200m
@@ -573,8 +561,6 @@ spec:
           value: "1"
         - name: DISABLE_PROFILER
           value: "1"
-        # - name: JAEGER_SERVICE_ADDR
-        #   value: "jaeger-collector:14268"
         readinessProbe:
           periodSeconds: 5
           exec:
