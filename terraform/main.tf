@@ -11,12 +11,13 @@ module "volterra" {
   api_p12_file = var.api_p12_file
   main_site_selector = var.main_site_selector
   state_site_selector = var.state_site_selector
+  utility_site_selector = var.utility_site_selector
   cred_expiry_days = var.cred_expiry_days
   bot_defense_region = var.bot_defense_region
 }
  
-module "kubectl" {
-  source = "./modules/kubectl"
+module "app-kubectl" {
+  source = "./modules/app-kubectl"
 
   reg_server = var.registry_server
   reg_password_b64 = base64encode(var.registry_password)
@@ -28,5 +29,19 @@ module "kubectl" {
   state_vsite = module.volterra.state_vsite
   
   kubecfg = module.volterra.kubecfg
+}
+
+module "utility-kubectl" {
+  source = "./modules/utility-kubectl"
+
+  reg_server = var.registry_server
+  reg_password_b64 = base64encode(var.registry_password)
+  reg_server_b64 = base64encode(var.registry_server)
+  reg_username_b64 = base64encode(var.registry_username)
+
+  utility_namespace = module.volterra.utility_namespace
+  utility_vsite = module.volterra.utility_vsite
+  
+  utility_kubecfg = module.volterra.utility_kubecfg
   target_url = module.volterra.app_url
 }

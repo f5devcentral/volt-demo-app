@@ -16,10 +16,19 @@ resource "volterra_namespace" "ns" {
   name = var.base
 }
 
+resource "volterra_namespace" "utility_ns" {
+  name = format("%s-utility", var.base)
+}
+
 //Consistency issue with provider response for NS resource
 //https://github.com/volterraedge/terraform-provider-volterra/issues/53
 resource "time_sleep" "ns_wait" {
   depends_on = [volterra_namespace.ns]
+  create_duration = "5s"
+}
+
+resource "time_sleep" "ns_utility_wait" {
+  depends_on = [volterra_namespace.utility_ns]
   create_duration = "5s"
 }
 
@@ -45,6 +54,17 @@ resource "volterra_virtual_site" "state" {
   site_type = "REGIONAL_EDGE"
 }
 
+resource "volterra_virtual_site" "utility" {
+  name      = format("%s-vs", volterra_namespace.utility_ns.name)
+  namespace = volterra_namespace.utility_ns.name
+  depends_on = [time_sleep.ns_utility_wait]
+
+  site_selector {
+    expressions = var.utility_site_selector
+  }
+  site_type = "REGIONAL_EDGE"
+}
+
 resource "volterra_virtual_k8s" "vk8s" {
   name      = format("%s-vk8s", volterra_namespace.ns.name)
   namespace = volterra_namespace.ns.name
@@ -60,10 +80,26 @@ resource "volterra_virtual_k8s" "vk8s" {
   }
 }
 
+resource "volterra_virtual_k8s" "utility_vk8s" {
+  name      = format("%s-vk8s", volterra_namespace.utility_ns.name)
+  namespace = volterra_namespace.utility_ns.name
+  depends_on = [time_sleep.ns_utility_wait]
+
+  vsite_refs {
+    name      = volterra_virtual_site.utility.name
+    namespace = volterra_namespace.utility_ns.name
+  }
+}
+
 //Consistency issue with vk8s resource response
 //https://github.com/volterraedge/terraform-provider-volterra/issues/54
 resource "time_sleep" "vk8s_wait" {
   depends_on = [volterra_virtual_k8s.vk8s]
+  create_duration = "120s"
+}
+
+resource "time_sleep" "utility_vk8s_wait" {
+  depends_on = [volterra_virtual_k8s.utility_vk8s]
   create_duration = "120s"
 }
 
@@ -76,9 +112,23 @@ resource "volterra_api_credential" "vk8s_cred" {
   depends_on = [time_sleep.vk8s_wait]
 }
 
+resource "volterra_api_credential" "utility_vk8s_cred" {
+  name      = format("%s-utility-api-cred", var.base)
+  api_credential_type = "KUBE_CONFIG"
+  virtual_k8s_namespace = volterra_namespace.utility_ns.name
+  virtual_k8s_name = volterra_virtual_k8s.utility_vk8s.name
+  expiry_days = var.cred_expiry_days
+  depends_on = [time_sleep.utility_vk8s_wait]
+}
+
 resource "local_file" "kubeconfig" {
     content = base64decode(volterra_api_credential.vk8s_cred.data)
     filename = format("%s/../../creds/%s", path.module, format("%s-vk8s.yaml", terraform.workspace))
+}
+
+resource "local_file" "utility_kubeconfig" {
+    content = base64decode(volterra_api_credential.utility_vk8s_cred.data)
+    filename = format("%s/../../creds/%s", path.module, format("%s-utility-vk8s.yaml", terraform.workspace))
 }
 
 resource "volterra_app_type" "at" {

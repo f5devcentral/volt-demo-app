@@ -10,16 +10,13 @@ variable "reg_server_b64" {
 variable "reg_username_b64" {
 }
 
-variable "namespace" {
+variable "utility_namespace" {
 }
 
-variable "main_vsite" {
+variable "utility_vsite" {
 }
 
-variable "state_vsite" {
-}
-
-variable "kubecfg" {
+variable "utility_kubecfg" {
 }
 
 variable "target_url" {
