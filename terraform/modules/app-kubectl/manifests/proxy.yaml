@@ -19,7 +19,8 @@ data:
             sub_filter_once on;
             proxy_set_header Accept-Encoding "";
             proxy_pass http://frontend;
-            sub_filter 'Free shipping with $75 purchase!' 'F5 Distributed Cloud Demo App';
+            sub_filter '<div class="h-free-shipping">' 
+            '<div class="h-free-shipping">F5XC Microservices Demo</div><div class="h-free-shipping" style="display: none;">';
             sub_filter '<div  class="local" >' '<div class="local" style="display: none;">';
             sub_filter '</head>'
             '${injected_js}</head>';
