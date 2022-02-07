@@ -324,6 +324,7 @@ resource "volterra_http_loadbalancer" "frontend" {
   round_robin                     = true
   service_policies_from_namespace = true
   no_challenge                    = true
+  add_location                    = true
 }
 
 resource "volterra_tcp_loadbalancer" "redis" {
