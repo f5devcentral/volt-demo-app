@@ -4,6 +4,14 @@ metadata:
   name: nginx-conf
 data:
   default.conf: |
+    map $sent_http_content_type $expires {
+        default                    off;
+        text/html                  epoch;
+        text/css                   max;
+        application/javascript     1d;
+        ~image/                    1d;
+    }
+    expires $expires;
     server {
         listen 8080;
         listen [::]:8080;
@@ -11,8 +19,7 @@ data:
             sub_filter_once on;
             proxy_set_header Accept-Encoding "";
             proxy_pass http://frontend;
-            sub_filter '<div class="h-free-shipping">Free shipping with $75 purchase!</div>' 
-            '<div class="h-free-shipping">F5 Distributed Cloud Demo App</div>';
+            sub_filter 'Free shipping with $75 purchase!' 'F5 Distributed Cloud Demo App';
             sub_filter '<div  class="local" >' '<div class="local" style="display: none;">';
             sub_filter '</head>'
             '${injected_js}</head>';
