@@ -9,9 +9,10 @@ data:
         listen [::]:8080;
         location / {
             sub_filter_once on;
-            sub_filter_types text/html;
             proxy_set_header Accept-Encoding "";
             proxy_pass http://frontend;
+            sub_filter 'Free shipping with $75 purchase!' 'F5 Distributed Cloud Demo App';
+            sub_filter '<div  class="local" >' '<div class="local" style="display: none;">';
             sub_filter '</head>'
             '${injected_js}</head>';
         }
@@ -26,7 +27,7 @@ kind: Deployment
 metadata:
   name: proxy
   annotations:
-    ves.io/workload-flavor: ves-io-medium
+    ves.io/workload-flavor: ves-io-tiny
     ves.io/virtual-sites: ${namespace}/${main_vsite}
 spec:
   selector:
