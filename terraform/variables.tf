@@ -45,3 +45,7 @@ variable "registry_server" {
 variable "bot_defense_region" {
     default = "US"
 }
+
+variable "injected_js" {
+    default = ""
+}

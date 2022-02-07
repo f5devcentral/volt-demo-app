@@ -27,6 +27,8 @@ module "app-kubectl" {
   namespace = module.volterra.namespace
   main_vsite = module.volterra.main_vsite
   state_vsite = module.volterra.state_vsite
+
+  injected_js = var.injected_js
   
   kubecfg = module.volterra.kubecfg
 }
