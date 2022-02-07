@@ -4,22 +4,22 @@ metadata:
   name: nginx-conf
 data:
   default.conf: |
-  server {
-      listen 8080;
-      listen [::]:8080;
-      location / {
-          sub_filter '</head>'
-          '${injected_js}</head>';
-          sub_filter_once on;
-          sub_filter_types text/html;
-          proxy_set_header Accept-Encoding "";
-          proxy_pass http://frontend;
-      }
-      location /__imp_apg__/ {
-          proxy_pass https://dip.zeronaught.com;
-      } 
-  }
-    
+    server {
+        listen 8080;
+        listen [::]:8080;
+        location / {
+            sub_filter_once on;
+            sub_filter_types text/html;
+            proxy_set_header Accept-Encoding "";
+            proxy_pass http://frontend;
+            sub_filter '</head>'
+            '${injected_js}</head>';
+        }
+        location /__imp_apg__/ {
+            proxy_pass https://dip.zeronaught.com;
+        } 
+    }
+
 ---
 apiVersion: apps/v1
 kind: Deployment
