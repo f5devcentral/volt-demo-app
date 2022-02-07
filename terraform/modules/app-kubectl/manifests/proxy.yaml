@@ -24,18 +24,18 @@ data:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: proxy-injector
+  name: proxy
   annotations:
     ves.io/workload-flavor: ves-io-medium
     ves.io/virtual-sites: ${namespace}/${main_vsite}
 spec:
   selector:
     matchLabels:
-      app: proxy-injector
+      app: proxy
   template:
     metadata:
       labels:
-        app: proxy-injector
+        app: proxy
     spec:
       serviceAccountName: default
       containers:
@@ -60,13 +60,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: proxy-injector
+  name: proxy
   annotations:
     ves.io/virtual-sites: ${namespace}/${main_vsite}
 spec:
   type: ClusterIP
   selector:
-    app: proxy-injector
+    app: proxy
   ports:
   - name: http
     port: 80

@@ -195,7 +195,7 @@ resource "volterra_origin_pool" "frontend" {
       inside_network  = false
       outside_network = false
       vk8s_networks   = true
-      service_name    = format("frontend.%s", volterra_namespace.ns.name)
+      service_name    = format("proxy.%s", volterra_namespace.ns.name)
       site_locator {
         virtual_site {
           name      = volterra_virtual_site.main.name
