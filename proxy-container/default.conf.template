@@ -1,0 +1,13 @@
+server {
+    listen 8080;
+    listen [::]:8080;
+
+    location / {
+        sub_filter "<head>" "<head>${INJECTED_JS}";
+        sub_filter_once on;
+        sub_filter_types text/html;
+
+        proxy_set_header Accept-Encoding "";
+        proxy_pass http://$UPSTREAM;
+    }
+}
