@@ -153,8 +153,9 @@ resource "volterra_app_type" "at" {
 }
 
 resource "volterra_app_setting" "as" {
-  name      = var.base
-  namespace = volterra_namespace.ns.name
+  name        = var.base
+  namespace   = volterra_namespace.ns.name
+  depends_on  = [time_sleep.ns_wait]
 
   app_type_settings {
     app_type_ref {
