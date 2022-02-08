@@ -184,11 +184,11 @@ resource "volterra_app_setting" "as" {
   }
 }
 
-resource "volterra_origin_pool" "frontend" {
-  name                   = format("%s-frontend", var.base)
+resource "volterra_origin_pool" "proxy" {
+  name                   = format("%s-proxy", var.base)
   namespace              = volterra_namespace.ns.name
   depends_on             = [time_sleep.ns_wait]
-  description            = format("Origin pool pointing to frontend k8s service running in main-vsite")
+  description            = format("Origin pool pointing to proxy k8s service running in main-vsite")
   loadbalancer_algorithm = "ROUND ROBIN"
   origin_servers {
     k8s_service {
@@ -259,7 +259,7 @@ resource "volterra_app_firewall" "af" {
   blocking = true
 }
 
-resource "volterra_http_loadbalancer" "frontend" {
+resource "volterra_http_loadbalancer" "proxy" {
   name                            = format("%s-fe", var.base)
   namespace                       = volterra_namespace.ns.name
   depends_on                      = [time_sleep.ns_wait]
@@ -269,12 +269,12 @@ resource "volterra_http_loadbalancer" "frontend" {
   labels                          = { "ves.io/app_type" = volterra_app_type.at.name }
   default_route_pools {
     pool {
-      name      = volterra_origin_pool.frontend.name
+      name      = volterra_origin_pool.proxy.name
       namespace = volterra_namespace.ns.name
     }
   }
   https_auto_cert {
-    add_hsts              = false
+    add_hsts              = true
     http_redirect         = true
     no_mtls               = true
     enable_path_normalize = true
@@ -319,6 +319,12 @@ resource "volterra_http_loadbalancer" "frontend" {
   user_identification {
     name      = volterra_user_identification.ui.name
     namespace = volterra_namespace.ns.name
+  }
+  more_option {
+    custom_errors = {
+      408 = format("string:///%s", filebase64("${path.module}/error-page.html"))
+      503 = format("string:///%s", filebase64("${path.module}/error-page.html"))
+    }
   }
   disable_rate_limit              = true
   round_robin                     = true

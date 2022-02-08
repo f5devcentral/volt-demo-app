@@ -15,6 +15,9 @@ data:
     server {
         listen 8080;
         listen [::]:8080;
+        location /__imp_apg__/ {
+            proxy_pass https://dip.zeronaught.com;
+        }
         location / {
             sub_filter_once on;
             proxy_set_header Accept-Encoding "";
@@ -25,9 +28,6 @@ data:
             sub_filter '</head>'
             '${injected_js}</head>';
         }
-        location /__imp_apg__/ {
-            proxy_pass https://dip.zeronaught.com;
-        } 
     }
 
 ---
