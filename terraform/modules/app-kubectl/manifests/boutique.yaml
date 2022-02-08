@@ -405,14 +405,14 @@ spec:
         - name: REDIS_ADDR
           value: "redis-cart.internal:6379"
         readinessProbe:
-          initialDelaySeconds: 60
+          initialDelaySeconds: 15
           exec:
-            command: ["/bin/grpc_health_probe", "-addr=:7070", "-rpc-timeout=10s"]
+            command: ["/bin/grpc_health_probe", "-addr=:7070", "-rpc-timeout=5s"]
         livenessProbe:
-          initialDelaySeconds: 60
-          periodSeconds: 30
+          initialDelaySeconds: 15
+          periodSeconds: 10
           exec:
-            command: ["/bin/grpc_health_probe", "-addr=:7070", "-rpc-timeout=10s"]
+            command: ["/bin/grpc_health_probe", "-addr=:7070", "-rpc-timeout=5s"]
 ---
 apiVersion: v1
 kind: Service
