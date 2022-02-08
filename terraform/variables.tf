@@ -46,6 +46,6 @@ variable "bot_defense_region" {
     default = "US"
 }
 
-variable "injected_js" {
-    default = ""
+variable "tenant_js_ref" {
+    default = "volt-f5_sales_demo_rljyvvmw-49301db1"
 }

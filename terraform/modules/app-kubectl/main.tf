@@ -22,7 +22,7 @@ data "kubectl_path_documents" "manifests" {
         reg_server_b64 = var.reg_server_b64,
         reg_username_b64 = var.reg_username_b64,
         reg_server = var.reg_server
-        injected_js = trimspace(var.injected_js)
+        tenant_js_ref = var.tenant_js_ref
     }
 }
 

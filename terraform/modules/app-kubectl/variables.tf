@@ -22,5 +22,5 @@ variable "state_vsite" {
 variable "kubecfg" {
 }
 
-variable "injected_js" {
+variable "tenant_js_ref" {
 }

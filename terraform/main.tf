@@ -28,7 +28,7 @@ module "app-kubectl" {
   main_vsite = module.volterra.main_vsite
   state_vsite = module.volterra.state_vsite
 
-  injected_js = var.injected_js
+  tenant_js_ref = var.tenant_js_ref
   
   kubecfg = module.volterra.kubecfg
 }
