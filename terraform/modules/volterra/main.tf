@@ -323,7 +323,7 @@ resource "volterra_http_loadbalancer" "proxy" {
   more_option {
     custom_errors = {
       408 = format("string:///%s", filebase64("${path.module}/error-page.html"))
-      503 = format("string:///%s", filebase64("${path.module}/error-page.html"))
+      5 = format("string:///%s", filebase64("${path.module}/error-page.html"))
     }
   }
   disable_rate_limit              = true
