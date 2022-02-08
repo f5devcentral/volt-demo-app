@@ -190,7 +190,8 @@ resource "volterra_origin_pool" "proxy" {
   namespace              = volterra_namespace.ns.name
   depends_on             = [time_sleep.ns_wait]
   description            = format("Origin pool pointing to proxy k8s service running in main-vsite")
-  loadbalancer_algorithm = "ROUND ROBIN"
+  loadbalancer_algorithm = "LB_OVERRIDE"
+  endpoint_selection     = "LOCAL_PREFERRED"
   origin_servers {
     k8s_service {
       inside_network  = false
@@ -207,7 +208,6 @@ resource "volterra_origin_pool" "proxy" {
   }
   port               = 80
   no_tls             = true
-  endpoint_selection = "LOCAL_PREFERRED"
 }
 
 resource "volterra_origin_pool" "redis" {
@@ -215,7 +215,8 @@ resource "volterra_origin_pool" "redis" {
   namespace              = volterra_namespace.ns.name
   depends_on             = [time_sleep.ns_wait]
   description            = format("Origin pool pointing to redis k8s service running in state-vsite")
-  loadbalancer_algorithm = "ROUND ROBIN"
+  loadbalancer_algorithm = "LB_OVERRIDE"
+  endpoint_selection     = "LOCAL_PREFERRED"
   origin_servers {
     k8s_service {
       inside_network  = false
@@ -232,7 +233,6 @@ resource "volterra_origin_pool" "redis" {
   }
   port               = 6379
   no_tls             = true
-  endpoint_selection = "LOCAL_PREFERRED"
 }
 
 resource "volterra_user_identification" "ui" {
@@ -268,6 +268,7 @@ resource "volterra_http_loadbalancer" "proxy" {
   domains                         = [var.app_fqdn]
   advertise_on_public_default_vip = true
   labels                          = { "ves.io/app_type" = volterra_app_type.at.name }
+  round_robin                     = true
   default_route_pools {
     pool {
       name      = volterra_origin_pool.proxy.name
@@ -315,7 +316,6 @@ resource "volterra_http_loadbalancer" "proxy" {
     }
     timeout = 1000
     regional_endpoint = var.bot_defense_region
-
   }
   user_identification {
     name      = volterra_user_identification.ui.name
@@ -329,7 +329,6 @@ resource "volterra_http_loadbalancer" "proxy" {
     }
   }
   disable_rate_limit              = true
-  round_robin                     = true
   service_policies_from_namespace = true
   no_challenge                    = true
   add_location                    = true
