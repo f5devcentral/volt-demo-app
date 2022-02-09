@@ -140,7 +140,7 @@ kind: Deployment
 metadata:
   name: recommendationservice
   annotations:
-    ves.io/workload-flavor: ves-io-medium
+    ves.io/workload-flavor: ves-io-tiny
     ves.io/virtual-sites: ${namespace}/${main_vsite}
 spec:
   selector:
@@ -198,7 +198,7 @@ kind: Deployment
 metadata:
   name: frontend
   annotations:
-    ves.io/workload-flavor: ves-io-medium
+    ves.io/workload-flavor: ves-io-tiny
     ves.io/virtual-sites: ${namespace}/${main_vsite}
 spec:
   selector:
@@ -275,7 +275,7 @@ kind: Deployment
 metadata:
   name: paymentservice
   annotations:
-    ves.io/workload-flavor: tiny
+    ves.io/workload-flavor: ves-io-tiny
     ves.io/virtual-sites: ${namespace}/${main_vsite}
 spec:
   selector:
@@ -329,7 +329,7 @@ kind: Deployment
 metadata:
   name: productcatalogservice
   annotations:
-    ves.io/workload-flavor: ves-io-medium
+    ves.io/workload-flavor: ves-io-tiny
     ves.io/virtual-sites: ${namespace}/${main_vsite}
 spec:
   selector:
@@ -434,7 +434,7 @@ kind: Deployment
 metadata:
   name: currencyservice
   annotations:
-    ves.io/workload-flavor: ves-io-medium
+    ves.io/workload-flavor: ves-io-tiny
     ves.io/virtual-sites: ${namespace}/${main_vsite}
 spec:
   selector:
