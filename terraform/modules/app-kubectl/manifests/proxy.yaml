@@ -19,9 +19,12 @@ data:
             proxy_pass https://dip.zeronaught.com;
         }
         location / {
-            sub_filter_once on;
+            proxy_read_timeout 5;
+            proxy_connect_timeout 5;
+            proxy_send_timeout 5;
             proxy_set_header Accept-Encoding "";
             proxy_pass http://frontend;
+            sub_filter_once on;
             sub_filter '<div class="h-free-shipping">' 
             '<div class="h-free-shipping">F5XC Microservices Demo</div><div class="h-free-shipping" style="display: none;">';
             sub_filter '<div  class="local" >' '<div class="local" style="display: none;">';
@@ -57,6 +60,22 @@ spec:
           - mountPath: /etc/nginx/conf.d
             readOnly: true
             name: nginx-conf
+          readinessProbe:
+            initialDelaySeconds: 10
+            httpGet:
+              path: "/_healthz"
+              port: 8080
+              httpHeaders:
+              - name: "Cookie"
+                value: "shop_session-id=x-readiness-probe"
+          livenessProbe:
+            initialDelaySeconds: 20
+            httpGet:
+              path: "/_healthz"
+              port: 8080
+              httpHeaders:
+              - name: "Cookie"
+                value: "shop_session-id=x-liveness-probe"
       volumes:
       - name: nginx-conf
         configMap:

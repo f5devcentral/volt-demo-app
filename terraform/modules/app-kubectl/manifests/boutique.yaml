@@ -48,10 +48,12 @@ spec:
           value: "1"
         readinessProbe:
           periodSeconds: 5
+          initialDelaySeconds: 5
           exec:
             command: ["/bin/grpc_health_probe", "-addr=:8080"]
         livenessProbe:
           periodSeconds: 5
+          initialDelaySeconds: 10
           exec:
             command: ["/bin/grpc_health_probe", "-addr=:8080"]
 ---
@@ -93,9 +95,11 @@ spec:
           ports:
           - containerPort: 5050
           readinessProbe:
+            initialDelaySeconds: 5
             exec:
               command: ["/bin/grpc_health_probe", "-addr=:5050"]
           livenessProbe:
+            initialDelaySeconds: 10
             exec:
               command: ["/bin/grpc_health_probe", "-addr=:5050"]
           env:
@@ -160,10 +164,12 @@ spec:
         - containerPort: 8080
         readinessProbe:
           periodSeconds: 5
+          initialDelaySeconds: 5
           exec:
             command: ["/bin/grpc_health_probe", "-addr=:8080"]
         livenessProbe:
           periodSeconds: 5
+          initialDelaySeconds: 10
           exec:
             command: ["/bin/grpc_health_probe", "-addr=:8080"]
         env:
@@ -224,7 +230,7 @@ spec:
               - name: "Cookie"
                 value: "shop_session-id=x-readiness-probe"
           livenessProbe:
-            initialDelaySeconds: 10
+            initialDelaySeconds: 20
             httpGet:
               path: "/_healthz"
               port: 8080
@@ -303,9 +309,11 @@ spec:
         - name: DISABLE_DEBUGGER
           value: "1"
         readinessProbe:
+          initialDelaySeconds: 5
           exec:
             command: ["/bin/grpc_health_probe", "-addr=:50051"]
         livenessProbe:
+          initialDelaySeconds: 10
           exec:
             command: ["/bin/grpc_health_probe", "-addr=:50051"]
 ---
@@ -357,9 +365,11 @@ spec:
         - name: DISABLE_PROFILER
           value: "1"
         readinessProbe:
+          initialDelaySeconds: 5
           exec:
             command: ["/bin/grpc_health_probe", "-addr=:3550"]
         livenessProbe:
+          initialDelaySeconds: 10
           exec:
             command: ["/bin/grpc_health_probe", "-addr=:3550"]
 ---
@@ -405,11 +415,11 @@ spec:
         - name: REDIS_ADDR
           value: "redis-cart.internal:6379"
         readinessProbe:
-          initialDelaySeconds: 15
+          initialDelaySeconds: 10
           exec:
             command: ["/bin/grpc_health_probe", "-addr=:7070", "-rpc-timeout=5s"]
         livenessProbe:
-          initialDelaySeconds: 15
+          initialDelaySeconds: 20
           periodSeconds: 10
           exec:
             command: ["/bin/grpc_health_probe", "-addr=:7070", "-rpc-timeout=5s"]
@@ -463,9 +473,11 @@ spec:
         - name: DISABLE_DEBUGGER
           value: "1"
         readinessProbe:
+          initialDelaySeconds: 5
           exec:
             command: ["/bin/grpc_health_probe", "-addr=:7000"]
         livenessProbe:
+          initialDelaySeconds: 10
           exec:
             command: ["/bin/grpc_health_probe", "-addr=:7000"]
 ---
@@ -516,10 +528,12 @@ spec:
         - name: DISABLE_PROFILER
           value: "1"
         readinessProbe:
+          initialDelaySeconds: 5
           periodSeconds: 5
           exec:
             command: ["/bin/grpc_health_probe", "-addr=:50051"]
         livenessProbe:
+          initialDelaySeconds: 10
           exec:
             command: ["/bin/grpc_health_probe", "-addr=:50051"]
 ---
@@ -558,10 +572,12 @@ spec:
         ports:
         - containerPort: 6379
         readinessProbe:
+          initialDelaySeconds: 5
           periodSeconds: 5
           tcpSocket:
             port: 6379
         livenessProbe:
+          initialDelaySeconds: 10
           periodSeconds: 5
           tcpSocket:
             port: 6379
