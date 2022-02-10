@@ -46,6 +46,8 @@ spec:
           value: "1"
         - name: DISABLE_PROFILER
           value: "1"
+        - name: DISABLE_PROFILER
+          value: "1"
         readinessProbe:
           periodSeconds: 5
           initialDelaySeconds: 5
@@ -76,6 +78,9 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: adservice
+  annotations:
+    ves.io/workload-flavor: ves-io-tiny
+    ves.io/virtual-sites: ${namespace}/${main_vsite}
 spec:
   selector:
     matchLabels:
@@ -98,6 +103,8 @@ spec:
         - name: DISABLE_STATS
           value: "1"
         - name: DISABLE_TRACING
+          value: "1"
+        - name: DISABLE_PROFILER
           value: "1"
         readinessProbe:
           initialDelaySeconds: 20
