@@ -185,6 +185,23 @@ resource "volterra_app_setting" "as" {
   }
 }
 
+resource "volterra_healthcheck" "frontend" {
+  name                   = format("%s-frontend", var.base)
+  namespace              = volterra_namespace.ns.name
+  depends_on             = [time_sleep.ns_wait]
+  http_health_check {
+    headers = {
+      "Cookie" = "shop_session-id=x-liveness-probe"
+    }
+    use_origin_server_name = true
+    path                   = "/_healthz"
+  }
+  healthy_threshold   = 2
+  interval            = 5
+  timeout             = 1
+  unhealthy_threshold = 5
+}
+
 resource "volterra_origin_pool" "frontend" {
   name                   = format("%s-frontend", var.base)
   namespace              = volterra_namespace.ns.name
@@ -205,6 +222,10 @@ resource "volterra_origin_pool" "frontend" {
         }
       }
     }
+  }
+  healthcheck {
+    name = volterra_healthcheck.frontend.name
+    namespace = volterra_healthcheck.frontend.namespace
   }
   port               = 80
   no_tls             = true
@@ -267,7 +288,7 @@ resource "volterra_http_loadbalancer" "frontend" {
   description                     = format("HTTPS loadbalancer object for %s origin server", var.base)
   domains                         = [var.app_fqdn]
   advertise_on_public_default_vip = true
-  labels                          = { "ves.io/app_type" = volterra_app_type.at.name }
+  labels                          = { "ves.io/app_type" : volterra_app_type.at.name }
   round_robin                     = true
   default_route_pools {
     pool {
@@ -323,8 +344,10 @@ resource "volterra_http_loadbalancer" "frontend" {
   }
   more_option {
     custom_errors = {
-      408 = format("string:///%s", filebase64("${path.module}/../../error-page.html"))
+      408 : format("string:///%s", filebase64("${path.module}/../../error-page.html")),
+      503 : format("string:///%s", filebase64("${path.module}/../../error-page.html"))      
     }
+    idle_timeout = 5000
   }
   disable_rate_limit              = true
   service_policies_from_namespace = true
@@ -340,7 +363,7 @@ resource "volterra_tcp_loadbalancer" "redis" {
   domains                         = ["redis-cart.internal"]
   dns_volterra_managed            = false
   listen_port                     = 6379
-  labels                          = { "ves.io/app_type" = volterra_app_type.at.name }
+  labels                          = { "ves.io/app_type" : volterra_app_type.at.name }
   origin_pools_weights {
     pool {
       name      = volterra_origin_pool.redis.name
