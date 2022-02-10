@@ -185,11 +185,11 @@ resource "volterra_app_setting" "as" {
   }
 }
 
-resource "volterra_origin_pool" "proxy" {
-  name                   = format("%s-proxy", var.base)
+resource "volterra_origin_pool" "frontend" {
+  name                   = format("%s-frontend", var.base)
   namespace              = volterra_namespace.ns.name
   depends_on             = [time_sleep.ns_wait]
-  description            = format("Origin pool pointing to proxy k8s service running in main-vsite")
+  description            = format("Origin pool pointing to frontend k8s service running in main-vsite")
   loadbalancer_algorithm = "LB_OVERRIDE"
   endpoint_selection     = "LOCAL_PREFERRED"
   origin_servers {
@@ -197,7 +197,7 @@ resource "volterra_origin_pool" "proxy" {
       inside_network  = false
       outside_network = false
       vk8s_networks   = true
-      service_name    = format("proxy.%s", volterra_namespace.ns.name)
+      service_name    = format("frontend.%s", volterra_namespace.ns.name)
       site_locator {
         virtual_site {
           name      = volterra_virtual_site.main.name
@@ -260,7 +260,7 @@ resource "volterra_app_firewall" "af" {
   blocking = true
 }
 
-resource "volterra_http_loadbalancer" "proxy" {
+resource "volterra_http_loadbalancer" "frontend" {
   name                            = format("%s-fe", var.base)
   namespace                       = volterra_namespace.ns.name
   depends_on                      = [time_sleep.ns_wait]
@@ -271,7 +271,7 @@ resource "volterra_http_loadbalancer" "proxy" {
   round_robin                     = true
   default_route_pools {
     pool {
-      name      = volterra_origin_pool.proxy.name
+      name      = volterra_origin_pool.frontend.name
       namespace = volterra_namespace.ns.name
     }
   }
@@ -323,7 +323,7 @@ resource "volterra_http_loadbalancer" "proxy" {
   }
   more_option {
     custom_errors = {
-      408 = format("string:///%s", filebase64("${path.module}/../error-page.html"))
+      408 = format("string:///%s", filebase64("${path.module}/../../error-page.html"))
     }
   }
   disable_rate_limit              = true
