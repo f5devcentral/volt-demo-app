@@ -9,8 +9,8 @@ module "volterra" {
   app_fqdn = var.app_fqdn
   api_url = var.api_url
   api_p12_file = var.api_p12_file
-  main_site_selector = var.main_site_selector
-  state_site_selector = var.state_site_selector
+  spoke_site_selector = var.spoke_site_selector
+  hub_site_selector = var.hub_site_selector
   utility_site_selector = var.utility_site_selector
   cred_expiry_days = var.cred_expiry_days
   bot_defense_region = var.bot_defense_region
@@ -25,8 +25,8 @@ module "app-kubectl" {
   reg_username_b64 = base64encode(var.registry_username)
 
   namespace = module.volterra.namespace
-  main_vsite = module.volterra.main_vsite
-  state_vsite = module.volterra.state_vsite
+  spoke_vsite = module.volterra.spoke_vsite
+  hub_vsite = module.volterra.hub_vsite
 
   tenant_js_ref = var.tenant_js_ref
   

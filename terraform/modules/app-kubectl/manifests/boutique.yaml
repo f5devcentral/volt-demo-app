@@ -22,7 +22,7 @@ metadata:
   name: emailservice
   annotations:
     ves.io/workload-flavor: ves-io-tiny
-    ves.io/virtual-sites: ${namespace}/${main_vsite}
+    ves.io/virtual-sites: ${namespace}/${spoke_vsite}
 spec:
   selector:
     matchLabels:
@@ -64,7 +64,7 @@ kind: Service
 metadata:
   name: emailservice
   annotations:
-    ves.io/virtual-sites: ${namespace}/${main_vsite}
+    ves.io/virtual-sites: ${namespace}/${spoke_vsite}
 spec:
   type: ClusterIP
   selector:
@@ -80,7 +80,7 @@ metadata:
   name: adservice
   annotations:
     ves.io/workload-flavor: ves-io-medium
-    ves.io/virtual-sites: ${namespace}/${main_vsite}
+    ves.io/virtual-sites: ${namespace}/${hub_vsite}
 spec:
   selector:
     matchLabels:
@@ -136,7 +136,7 @@ metadata:
   name: checkoutservice
   annotations:
     ves.io/workload-flavor: ves-io-tiny
-    ves.io/virtual-sites: ${namespace}/${main_vsite}
+    ves.io/virtual-sites: ${namespace}/${spoke_vsite}
 spec:
   selector:
     matchLabels:
@@ -187,7 +187,7 @@ kind: Service
 metadata:
   name: checkoutservice
   annotations:
-    ves.io/virtual-sites: ${namespace}/${main_vsite}
+    ves.io/virtual-sites: ${namespace}/${spoke_vsite}
 spec:
   type: ClusterIP
   selector:
@@ -202,8 +202,8 @@ kind: Deployment
 metadata:
   name: recommendationservice
   annotations:
-    ves.io/workload-flavor: ves-io-tiny
-    ves.io/virtual-sites: ${namespace}/${main_vsite}
+    ves.io/workload-flavor: ves-io-medium
+    ves.io/virtual-sites: ${namespace}/${spoke_vsite}
 spec:
   selector:
     matchLabels:
@@ -247,7 +247,7 @@ kind: Service
 metadata:
   name: recommendationservice
   annotations:
-    ves.io/virtual-sites: ${namespace}/${main_vsite}
+    ves.io/virtual-sites: ${namespace}/${spoke_vsite}
 spec:
   type: ClusterIP
   selector:
@@ -263,7 +263,7 @@ metadata:
   name: frontend
   annotations:
     ves.io/workload-flavor: ves-io-tiny
-    ves.io/virtual-sites: ${namespace}/${main_vsite}
+    ves.io/virtual-sites: ${namespace}/${spoke_vsite}
 spec:
   selector:
     matchLabels:
@@ -311,7 +311,7 @@ spec:
           - name: CHECKOUT_SERVICE_ADDR
             value: "checkoutservice:5050"
           - name: AD_SERVICE_ADDR
-            value: "adservice:9555"
+            value: "adservice.internal:9555"
           - name: ENV_PLATFORM 
             value: "local"
           - name: DISABLE_TRACING
@@ -360,7 +360,7 @@ kind: Service
 metadata:
   name: frontend
   annotations:
-    ves.io/virtual-sites: ${namespace}/${main_vsite}
+    ves.io/virtual-sites: ${namespace}/${spoke_vsite}
 spec:
   type: ClusterIP
   selector:
@@ -376,7 +376,7 @@ metadata:
   name: paymentservice
   annotations:
     ves.io/workload-flavor: ves-io-tiny
-    ves.io/virtual-sites: ${namespace}/${main_vsite}
+    ves.io/virtual-sites: ${namespace}/${spoke_vsite}
 spec:
   selector:
     matchLabels:
@@ -416,7 +416,7 @@ kind: Service
 metadata:
   name: paymentservice
   annotations:
-    ves.io/virtual-sites: ${namespace}/${main_vsite}
+    ves.io/virtual-sites: ${namespace}/${spoke_vsite}
 spec:
   type: ClusterIP
   selector:
@@ -432,7 +432,7 @@ metadata:
   name: productcatalogservice
   annotations:
     ves.io/workload-flavor: ves-io-tiny
-    ves.io/virtual-sites: ${namespace}/${main_vsite}
+    ves.io/virtual-sites: ${namespace}/${spoke_vsite}
 spec:
   selector:
     matchLabels:
@@ -472,7 +472,7 @@ kind: Service
 metadata:
   name: productcatalogservice
   annotations:
-    ves.io/virtual-sites: ${namespace}/${main_vsite}
+    ves.io/virtual-sites: ${namespace}/${spoke_vsite}
 spec:
   type: ClusterIP
   selector:
@@ -488,7 +488,7 @@ metadata:
   name: cartservice
   annotations:
     ves.io/workload-flavor: ves-io-medium
-    ves.io/virtual-sites: ${namespace}/${main_vsite}
+    ves.io/virtual-sites: ${namespace}/${spoke_vsite}
 spec:
   selector:
     matchLabels:
@@ -523,7 +523,7 @@ kind: Service
 metadata:
   name: cartservice
   annotations:
-    ves.io/virtual-sites: ${namespace}/${main_vsite}
+    ves.io/virtual-sites: ${namespace}/${spoke_vsite}
 spec:
   type: ClusterIP
   selector:
@@ -539,7 +539,7 @@ metadata:
   name: currencyservice
   annotations:
     ves.io/workload-flavor: ves-io-tiny
-    ves.io/virtual-sites: ${namespace}/${main_vsite}
+    ves.io/virtual-sites: ${namespace}/${spoke_vsite}
 spec:
   selector:
     matchLabels:
@@ -580,7 +580,7 @@ kind: Service
 metadata:
   name: currencyservice
   annotations:
-    ves.io/virtual-sites: ${namespace}/${main_vsite}
+    ves.io/virtual-sites: ${namespace}/${spoke_vsite}
 spec:
   type: ClusterIP
   selector:
@@ -596,7 +596,7 @@ metadata:
   name: shippingservice
   annotations:
     ves.io/workload-flavor: ves-io-tiny
-    ves.io/virtual-sites: ${namespace}/${main_vsite}
+    ves.io/virtual-sites: ${namespace}/${spoke_vsite}
 spec:
   selector:
     matchLabels:
@@ -650,7 +650,7 @@ metadata:
   name: redis-cart
   annotations:
     ves.io/workload-flavor: ves-io-medium
-    ves.io/virtual-sites: ${namespace}/${state_vsite}
+    ves.io/virtual-sites: ${namespace}/${hub_vsite}
 spec:
   selector:
     matchLabels:
@@ -689,7 +689,7 @@ kind: Service
 metadata:
   name: redis-cart
   annotations:
-    ves.io/virtual-sites: ${namespace}/${state_vsite}
+    ves.io/virtual-sites: ${namespace}/${hub_vsite}
 spec:
   type: ClusterIP
   selector:

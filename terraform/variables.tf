@@ -14,11 +14,11 @@ variable "api_p12_file" {
   default = "./creds/tenant.api-creds.p12"
 }
 
-variable "main_site_selector" {
+variable "spoke_site_selector" {
   default = ["ves.io/siteName in (ves-io-ny8-nyc, ves-io-wes-sea)"]
 }
 
-variable "state_site_selector" {
+variable "hub_site_selector" {
   default = ["ves.io/siteName in (ves-io-dc12-ash)"]
 }
 

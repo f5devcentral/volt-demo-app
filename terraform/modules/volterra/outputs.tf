@@ -13,14 +13,14 @@ output "utility_namespace" {
   value       = volterra_namespace.utility_ns.name
 }
 
-output "main_vsite" {
+output "spoke_vsite" {
   description = "Virtual site for the application"
-  value       = volterra_virtual_site.main.name
+  value       = volterra_virtual_site.spoke.name
 }
 
-output "state_vsite" {
-  description = "Virtual site for the state service"
-  value       = volterra_virtual_site.state.name
+output "hub_vsite" {
+  description = "Virtual site for the hub services"
+  value       = volterra_virtual_site.hub.name
 }
 
 output "utility_vsite" {
