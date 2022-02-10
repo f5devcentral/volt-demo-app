@@ -79,7 +79,7 @@ kind: Deployment
 metadata:
   name: adservice
   annotations:
-    ves.io/workload-flavor: ves-io-tiny
+    ves.io/workload-flavor: ves-io-medium
     ves.io/virtual-sites: ${namespace}/${main_vsite}
 spec:
   selector:
