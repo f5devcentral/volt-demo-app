@@ -340,9 +340,7 @@ resource "volterra_http_loadbalancer" "frontend" {
         javascript_location  = "After <head> tag"
       }
       protected_app_endpoints {
-        domain {
-          exact_value = var.app_fqdn
-        }
+        any_domain = true
         path {
           prefix = "/cart"
         }

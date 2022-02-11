@@ -65,6 +65,8 @@ metadata:
   name: emailservice
   annotations:
     ves.io/virtual-sites: ${namespace}/${spoke_vsite}
+    ves.io/proxy-type: HTTP_PROXY
+    ves.io/http2-enable: "true"
 spec:
   type: ClusterIP
   selector:
@@ -79,7 +81,7 @@ kind: Deployment
 metadata:
   name: adservice
   annotations:
-    ves.io/workload-flavor: ves-io-medium
+    ves.io/workload-flavor: ves-io-tiny
     ves.io/virtual-sites: ${namespace}/${hub_vsite}
 spec:
   selector:
@@ -121,6 +123,8 @@ apiVersion: v1
 kind: Service
 metadata:
   name: adservice
+  annotations:
+    ves.io/virtual-sites: ${namespace}/${hub_vsite}
 spec:
   type: ClusterIP
   selector:
@@ -188,6 +192,8 @@ metadata:
   name: checkoutservice
   annotations:
     ves.io/virtual-sites: ${namespace}/${spoke_vsite}
+    ves.io/proxy-type: HTTP_PROXY
+    ves.io/http2-enable: "true"
 spec:
   type: ClusterIP
   selector:
@@ -202,7 +208,7 @@ kind: Deployment
 metadata:
   name: recommendationservice
   annotations:
-    ves.io/workload-flavor: ves-io-medium
+    ves.io/workload-flavor: ves-io-tiny
     ves.io/virtual-sites: ${namespace}/${spoke_vsite}
 spec:
   selector:
@@ -248,6 +254,8 @@ metadata:
   name: recommendationservice
   annotations:
     ves.io/virtual-sites: ${namespace}/${spoke_vsite}
+    ves.io/proxy-type: HTTP_PROXY
+    ves.io/http2-enable: "true"
 spec:
   type: ClusterIP
   selector:
@@ -417,6 +425,8 @@ metadata:
   name: paymentservice
   annotations:
     ves.io/virtual-sites: ${namespace}/${spoke_vsite}
+    ves.io/proxy-type: HTTP_PROXY
+    ves.io/http2-enable: "true"
 spec:
   type: ClusterIP
   selector:
@@ -473,6 +483,8 @@ metadata:
   name: productcatalogservice
   annotations:
     ves.io/virtual-sites: ${namespace}/${spoke_vsite}
+    ves.io/proxy-type: HTTP_PROXY
+    ves.io/http2-enable: "true"
 spec:
   type: ClusterIP
   selector:
@@ -487,7 +499,7 @@ kind: Deployment
 metadata:
   name: cartservice
   annotations:
-    ves.io/workload-flavor: ves-io-medium
+    ves.io/workload-flavor: ves-io-tiny
     ves.io/virtual-sites: ${namespace}/${spoke_vsite}
 spec:
   selector:
@@ -524,6 +536,8 @@ metadata:
   name: cartservice
   annotations:
     ves.io/virtual-sites: ${namespace}/${spoke_vsite}
+    ves.io/proxy-type: HTTP_PROXY
+    ves.io/http2-enable: "true"
 spec:
   type: ClusterIP
   selector:
@@ -581,6 +595,8 @@ metadata:
   name: currencyservice
   annotations:
     ves.io/virtual-sites: ${namespace}/${spoke_vsite}
+    ves.io/proxy-type: HTTP_PROXY
+    ves.io/http2-enable: "true"
 spec:
   type: ClusterIP
   selector:
@@ -635,6 +651,10 @@ apiVersion: v1
 kind: Service
 metadata:
   name: shippingservice
+  annotations:
+    ves.io/virtual-sites: ${namespace}/${spoke_vsite}
+    ves.io/proxy-type: HTTP_PROXY
+    ves.io/http2-enable: "true"
 spec:
   type: ClusterIP
   selector:
