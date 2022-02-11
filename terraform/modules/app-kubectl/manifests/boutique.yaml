@@ -22,7 +22,7 @@ metadata:
   name: emailservice
   annotations:
     ves.io/workload-flavor: ves-io-tiny
-    ves.io/virtual-sites: ${namespace}/${main_vsite}
+    ves.io/virtual-sites: ${namespace}/${spoke_vsite}
 spec:
   selector:
     matchLabels:
@@ -46,12 +46,18 @@ spec:
           value: "1"
         - name: DISABLE_PROFILER
           value: "1"
+        - name: DISABLE_PROFILER
+          value: "1"
         readinessProbe:
           periodSeconds: 5
+          initialDelaySeconds: 5
+          timeoutSeconds: 2
           exec:
             command: ["/bin/grpc_health_probe", "-addr=:8080"]
         livenessProbe:
           periodSeconds: 5
+          initialDelaySeconds: 10
+          timeoutSeconds: 2
           exec:
             command: ["/bin/grpc_health_probe", "-addr=:8080"]
 ---
@@ -60,7 +66,9 @@ kind: Service
 metadata:
   name: emailservice
   annotations:
-    ves.io/virtual-sites: ${namespace}/${main_vsite}
+    ves.io/virtual-sites: ${namespace}/${spoke_vsite}
+    ves.io/proxy-type: HTTP_PROXY
+    ves.io/http2-enable: "true"
 spec:
   type: ClusterIP
   selector:
@@ -73,10 +81,68 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: adservice
+  annotations:
+    ves.io/workload-flavor: ves-io-medium
+    ves.io/virtual-sites: ${namespace}/${hub_vsite}
+spec:
+  selector:
+    matchLabels:
+      app: adservice
+  template:
+    metadata:
+      labels:
+        app: adservice
+    spec:
+      serviceAccountName: default
+      terminationGracePeriodSeconds: 5
+      containers:
+      - name: server
+        image: gcr.io/google-samples/microservices-demo/adservice:v0.3.6
+        ports:
+        - containerPort: 9555
+        env:
+        - name: PORT
+          value: "9555"
+        - name: DISABLE_STATS
+          value: "1"
+        - name: DISABLE_TRACING
+          value: "1"
+        - name: DISABLE_PROFILER
+          value: "1"
+        readinessProbe:
+          initialDelaySeconds: 20
+          periodSeconds: 15
+          exec:
+            command: ["/bin/grpc_health_probe", "-addr=:9555"]
+        livenessProbe:
+          initialDelaySeconds: 20
+          periodSeconds: 15
+          exec:
+            command: ["/bin/grpc_health_probe", "-addr=:9555"]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: adservice
+  annotations:
+    ves.io/virtual-sites: ${namespace}/${hub_vsite}
+spec:
+  type: ClusterIP
+  selector:
+    app: adservice
+  ports:
+  - name: grpc
+    port: 9555
+    targetPort: 9555
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
   name: checkoutservice
   annotations:
     ves.io/workload-flavor: ves-io-tiny
-    ves.io/virtual-sites: ${namespace}/${main_vsite}
+    ves.io/virtual-sites: ${namespace}/${spoke_vsite}
 spec:
   selector:
     matchLabels:
@@ -93,9 +159,13 @@ spec:
           ports:
           - containerPort: 5050
           readinessProbe:
+            initialDelaySeconds: 5
+            timeoutSeconds: 2
             exec:
               command: ["/bin/grpc_health_probe", "-addr=:5050"]
           livenessProbe:
+            initialDelaySeconds: 10
+            timeoutSeconds: 2
             exec:
               command: ["/bin/grpc_health_probe", "-addr=:5050"]
           env:
@@ -125,7 +195,9 @@ kind: Service
 metadata:
   name: checkoutservice
   annotations:
-    ves.io/virtual-sites: ${namespace}/${main_vsite}
+    ves.io/virtual-sites: ${namespace}/${spoke_vsite}
+    ves.io/proxy-type: HTTP_PROXY
+    ves.io/http2-enable: "true"
 spec:
   type: ClusterIP
   selector:
@@ -141,7 +213,7 @@ metadata:
   name: recommendationservice
   annotations:
     ves.io/workload-flavor: ves-io-tiny
-    ves.io/virtual-sites: ${namespace}/${main_vsite}
+    ves.io/virtual-sites: ${namespace}/${spoke_vsite}
 spec:
   selector:
     matchLabels:
@@ -160,10 +232,12 @@ spec:
         - containerPort: 8080
         readinessProbe:
           periodSeconds: 5
+          initialDelaySeconds: 5
           exec:
             command: ["/bin/grpc_health_probe", "-addr=:8080"]
         livenessProbe:
           periodSeconds: 5
+          initialDelaySeconds: 10
           exec:
             command: ["/bin/grpc_health_probe", "-addr=:8080"]
         env:
@@ -183,7 +257,9 @@ kind: Service
 metadata:
   name: recommendationservice
   annotations:
-    ves.io/virtual-sites: ${namespace}/${main_vsite}
+    ves.io/virtual-sites: ${namespace}/${spoke_vsite}
+    ves.io/proxy-type: HTTP_PROXY
+    ves.io/http2-enable: "true"
 spec:
   type: ClusterIP
   selector:
@@ -198,8 +274,8 @@ kind: Deployment
 metadata:
   name: frontend
   annotations:
-    ves.io/workload-flavor: ves-io-medium
-    ves.io/virtual-sites: ${namespace}/${main_vsite}
+    ves.io/workload-flavor: ves-io-tiny
+    ves.io/virtual-sites: ${namespace}/${spoke_vsite}
 spec:
   selector:
     matchLabels:
@@ -211,7 +287,7 @@ spec:
     spec:
       serviceAccountName: default
       containers:
-        - name: server
+        - name: frontend
           image: gcr.io/google-samples/microservices-demo/frontend:v0.3.6
           ports:
           - containerPort: 8080
@@ -224,7 +300,7 @@ spec:
               - name: "Cookie"
                 value: "shop_session-id=x-readiness-probe"
           livenessProbe:
-            initialDelaySeconds: 10
+            initialDelaySeconds: 20
             httpGet:
               path: "/_healthz"
               port: 8080
@@ -247,20 +323,56 @@ spec:
           - name: CHECKOUT_SERVICE_ADDR
             value: "checkoutservice:5050"
           - name: AD_SERVICE_ADDR
-            value: "adservice:9555"
+            value: "adservice.internal:9555"
           - name: ENV_PLATFORM 
             value: "local"
           - name: DISABLE_TRACING
             value: "1"
           - name: DISABLE_PROFILER
             value: "1"
+        - name: proxy
+          image: ${reg_server}/nginx-unprivileged
+          ports:
+          - containerPort: 8181
+          readinessProbe:
+            initialDelaySeconds: 5
+            httpGet:
+              path: "/_healthy"
+              port: 8181
+          livenessProbe:
+            initialDelaySeconds: 10
+            httpGet:
+              path: "/_healthy"
+              port: 8181
+          volumeMounts:
+          - mountPath: /etc/nginx/conf.d
+            readOnly: true
+            name: nginx-conf
+          - mountPath: /usr/share/nginx/html
+            readOnly: true
+            name: error-html
+      volumes:
+      - name: nginx-conf
+        configMap:
+          name: nginx-conf
+          items:
+            - key: default.conf
+              path: default.conf
+      - name: error-html
+        configMap:
+          name: error-html
+          items:
+            - key: error.html
+              path: error.html
+      imagePullSecrets:
+      - name: registry-secret
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: frontend
   annotations:
-    ves.io/virtual-sites: ${namespace}/${main_vsite}
+    ves.io/virtual-sites: ${namespace}/${spoke_vsite}
 spec:
   type: ClusterIP
   selector:
@@ -268,15 +380,15 @@ spec:
   ports:
   - name: http
     port: 80
-    targetPort: 8080
+    targetPort: 8181
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: paymentservice
   annotations:
-    ves.io/workload-flavor: tiny
-    ves.io/virtual-sites: ${namespace}/${main_vsite}
+    ves.io/workload-flavor: ves-io-tiny
+    ves.io/virtual-sites: ${namespace}/${spoke_vsite}
 spec:
   selector:
     matchLabels:
@@ -303,9 +415,11 @@ spec:
         - name: DISABLE_DEBUGGER
           value: "1"
         readinessProbe:
+          initialDelaySeconds: 5
           exec:
             command: ["/bin/grpc_health_probe", "-addr=:50051"]
         livenessProbe:
+          initialDelaySeconds: 10
           exec:
             command: ["/bin/grpc_health_probe", "-addr=:50051"]
 ---
@@ -314,7 +428,9 @@ kind: Service
 metadata:
   name: paymentservice
   annotations:
-    ves.io/virtual-sites: ${namespace}/${main_vsite}
+    ves.io/virtual-sites: ${namespace}/${spoke_vsite}
+    ves.io/proxy-type: HTTP_PROXY
+    ves.io/http2-enable: "true"
 spec:
   type: ClusterIP
   selector:
@@ -330,7 +446,7 @@ metadata:
   name: productcatalogservice
   annotations:
     ves.io/workload-flavor: ves-io-tiny
-    ves.io/virtual-sites: ${namespace}/${main_vsite}
+    ves.io/virtual-sites: ${namespace}/${spoke_vsite}
 spec:
   selector:
     matchLabels:
@@ -357,9 +473,11 @@ spec:
         - name: DISABLE_PROFILER
           value: "1"
         readinessProbe:
+          initialDelaySeconds: 5
           exec:
             command: ["/bin/grpc_health_probe", "-addr=:3550"]
         livenessProbe:
+          initialDelaySeconds: 10
           exec:
             command: ["/bin/grpc_health_probe", "-addr=:3550"]
 ---
@@ -368,7 +486,9 @@ kind: Service
 metadata:
   name: productcatalogservice
   annotations:
-    ves.io/virtual-sites: ${namespace}/${main_vsite}
+    ves.io/virtual-sites: ${namespace}/${spoke_vsite}
+    ves.io/proxy-type: HTTP_PROXY
+    ves.io/http2-enable: "true"
 spec:
   type: ClusterIP
   selector:
@@ -384,7 +504,7 @@ metadata:
   name: cartservice
   annotations:
     ves.io/workload-flavor: ves-io-medium
-    ves.io/virtual-sites: ${namespace}/${main_vsite}
+    ves.io/virtual-sites: ${namespace}/${spoke_vsite}
 spec:
   selector:
     matchLabels:
@@ -405,21 +525,25 @@ spec:
         - name: REDIS_ADDR
           value: "redis-cart.internal:6379"
         readinessProbe:
-          initialDelaySeconds: 60
+          initialDelaySeconds: 10
+          timeoutSeconds: 2
           exec:
-            command: ["/bin/grpc_health_probe", "-addr=:7070", "-rpc-timeout=10s"]
+            command: ["/bin/grpc_health_probe", "-addr=:7070", "-rpc-timeout=5s"]
         livenessProbe:
-          initialDelaySeconds: 60
-          periodSeconds: 30
+          initialDelaySeconds: 20
+          timeoutSeconds: 2
+          periodSeconds: 10
           exec:
-            command: ["/bin/grpc_health_probe", "-addr=:7070", "-rpc-timeout=10s"]
+            command: ["/bin/grpc_health_probe", "-addr=:7070", "-rpc-timeout=5s"]
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: cartservice
   annotations:
-    ves.io/virtual-sites: ${namespace}/${main_vsite}
+    ves.io/virtual-sites: ${namespace}/${spoke_vsite}
+    ves.io/proxy-type: HTTP_PROXY
+    ves.io/http2-enable: "true"
 spec:
   type: ClusterIP
   selector:
@@ -435,7 +559,7 @@ metadata:
   name: currencyservice
   annotations:
     ves.io/workload-flavor: ves-io-tiny
-    ves.io/virtual-sites: ${namespace}/${main_vsite}
+    ves.io/virtual-sites: ${namespace}/${spoke_vsite}
 spec:
   selector:
     matchLabels:
@@ -463,9 +587,11 @@ spec:
         - name: DISABLE_DEBUGGER
           value: "1"
         readinessProbe:
+          initialDelaySeconds: 5
           exec:
             command: ["/bin/grpc_health_probe", "-addr=:7000"]
         livenessProbe:
+          initialDelaySeconds: 10
           exec:
             command: ["/bin/grpc_health_probe", "-addr=:7000"]
 ---
@@ -474,7 +600,9 @@ kind: Service
 metadata:
   name: currencyservice
   annotations:
-    ves.io/virtual-sites: ${namespace}/${main_vsite}
+    ves.io/virtual-sites: ${namespace}/${spoke_vsite}
+    ves.io/proxy-type: HTTP_PROXY
+    ves.io/http2-enable: "true"
 spec:
   type: ClusterIP
   selector:
@@ -490,7 +618,7 @@ metadata:
   name: shippingservice
   annotations:
     ves.io/workload-flavor: ves-io-tiny
-    ves.io/virtual-sites: ${namespace}/${main_vsite}
+    ves.io/virtual-sites: ${namespace}/${spoke_vsite}
 spec:
   selector:
     matchLabels:
@@ -516,10 +644,12 @@ spec:
         - name: DISABLE_PROFILER
           value: "1"
         readinessProbe:
+          initialDelaySeconds: 5
           periodSeconds: 5
           exec:
             command: ["/bin/grpc_health_probe", "-addr=:50051"]
         livenessProbe:
+          initialDelaySeconds: 10
           exec:
             command: ["/bin/grpc_health_probe", "-addr=:50051"]
 ---
@@ -527,6 +657,10 @@ apiVersion: v1
 kind: Service
 metadata:
   name: shippingservice
+  annotations:
+    ves.io/virtual-sites: ${namespace}/${spoke_vsite}
+    ves.io/proxy-type: HTTP_PROXY
+    ves.io/http2-enable: "true"
 spec:
   type: ClusterIP
   selector:
@@ -542,7 +676,7 @@ metadata:
   name: redis-cart
   annotations:
     ves.io/workload-flavor: ves-io-medium
-    ves.io/virtual-sites: ${namespace}/${state_vsite}
+    ves.io/virtual-sites: ${namespace}/${hub_vsite}
 spec:
   selector:
     matchLabels:
@@ -558,10 +692,12 @@ spec:
         ports:
         - containerPort: 6379
         readinessProbe:
+          initialDelaySeconds: 5
           periodSeconds: 5
           tcpSocket:
             port: 6379
         livenessProbe:
+          initialDelaySeconds: 10
           periodSeconds: 5
           tcpSocket:
             port: 6379
@@ -579,7 +715,7 @@ kind: Service
 metadata:
   name: redis-cart
   annotations:
-    ves.io/virtual-sites: ${namespace}/${state_vsite}
+    ves.io/virtual-sites: ${namespace}/${hub_vsite}
 spec:
   type: ClusterIP
   selector:

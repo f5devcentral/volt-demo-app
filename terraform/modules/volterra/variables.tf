@@ -10,10 +10,10 @@ variable "api_url" {
 variable "api_p12_file" {
 }
 
-variable "main_site_selector" {
+variable "spoke_site_selector" {
 }
 
-variable "state_site_selector" {
+variable "hub_site_selector" {
 }
 
 variable "utility_site_selector" {

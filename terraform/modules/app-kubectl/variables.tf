@@ -13,13 +13,14 @@ variable "reg_username_b64" {
 variable "namespace" {
 }
 
-variable "main_vsite" {
+variable "spoke_vsite" {
 }
 
-variable "state_vsite" {
+variable "hub_vsite" {
 }
 
 variable "kubecfg" {
 }
 
-
+variable "tenant_js_ref" {
+}
