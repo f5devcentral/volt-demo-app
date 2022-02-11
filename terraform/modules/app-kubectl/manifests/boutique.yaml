@@ -81,7 +81,7 @@ kind: Deployment
 metadata:
   name: adservice
   annotations:
-    ves.io/workload-flavor: ves-io-tiny
+    ves.io/workload-flavor: ves-io-medium
     ves.io/virtual-sites: ${namespace}/${hub_vsite}
 spec:
   selector:
@@ -499,7 +499,7 @@ kind: Deployment
 metadata:
   name: cartservice
   annotations:
-    ves.io/workload-flavor: ves-io-tiny
+    ves.io/workload-flavor: ves-io-medium
     ves.io/virtual-sites: ${namespace}/${spoke_vsite}
 spec:
   selector:
