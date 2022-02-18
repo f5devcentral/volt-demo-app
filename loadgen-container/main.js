@@ -7,7 +7,7 @@ import { synthetic } from "./synthetic.js";
 
 export const options = {
     stages: [
-      { target: 20, duration: `${__ENV.DURATION}` }
+      { target: 10, duration: `${__ENV.DURATION}` }
     ]
   };
 
