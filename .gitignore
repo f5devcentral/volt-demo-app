@@ -5,3 +5,4 @@ terraform.*
 *.tfvars
 !example.tfvars
 *vk8s.yaml
+venv
