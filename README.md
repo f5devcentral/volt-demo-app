@@ -9,10 +9,10 @@ HTTP request telemetry, security event monitoring, virtual kubernetes abstractio
 
 ## About the application
 
-The demo application is v0.1.2 of the [GCP microservices demo](https://github.com/GoogleCloudPlatform/microservices-demo).
+The demo application is v0.3.6 of the [GCP microservices demo](https://github.com/GoogleCloudPlatform/microservices-demo).
 The app consists of 11 microservices that talk to each other over gRPC.
 
-![demo arch](https://github.com/GoogleCloudPlatform/microservices-demo/blob/master/docs/img/architecture-diagram.png)
+![demo arch](https://github.com/GoogleCloudPlatform/microservices-demo/raw/main/docs/img/architecture-diagram.png)
 
 ## About the architecture
 

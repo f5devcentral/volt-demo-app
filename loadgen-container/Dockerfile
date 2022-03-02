@@ -12,7 +12,7 @@ COPY --chown=1001:1 config /tmp/privoxy/config
 
 USER 1001
 WORKDIR /home/user
-COPY *.js* .
+COPY *.js* ./
 COPY config .
 COPY entrypoint.sh .
 
